@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface WordsRepository extends JpaRepository<WordsEntity, Integer> {
     WordsEntity findByWord(String word);
 
+    // ORDER BY RAND() 이 함수가 랜덤 단어 출력
     @Query(value = """
         SELECT * FROM words w 
         WHERE w.firstchar = :firstchar

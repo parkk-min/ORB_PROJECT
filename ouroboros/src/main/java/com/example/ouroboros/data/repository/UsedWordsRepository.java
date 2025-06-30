@@ -9,4 +9,6 @@ public interface UsedWordsRepository extends JpaRepository<UsedWordsEntity, Inte
     boolean existsByWordAndUser_Username(String word, String userUsername);
 
     UsedWordsEntity findTopByUser_UsernameOrderByIdDesc(String username);
+
+    void deleteByUser_Username(String username);
 }
