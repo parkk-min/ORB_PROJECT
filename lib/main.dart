@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:ouroboros/signup.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -13,7 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: MyPage(),
+      // home: MyPage(),
+      initialRoute: "/",
+      routes: {
+        '/':(context)=> MyPage(),
+        '/signup':(context)=>Signup(),
+      },
     );
   }
 }
@@ -40,11 +47,11 @@ class _MyPageState extends State<MyPage> {
         centerTitle: true,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 300,),
               BouncingLetter(char: "끝",delayMs: 600,),
               SizedBox(width: 20,),
               BouncingLetter(char: "말",delayMs: 1500,),
@@ -55,31 +62,40 @@ class _MyPageState extends State<MyPage> {
               SizedBox(height: 30,)
                 ],
               ),
-          Row(
+          SizedBox(height: 40,),
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                  padding: EdgeInsets.all(0),
-                  child: ElevatedButton(
-                      onPressed: (){
-
-                      },
-                      child: Text("로그인",
-                      style: TextStyle(
-
-                      ),
-                      ),
-                  )
+              Image.asset(
+                'images/rotating_ouroboros_highres_ccw.gif',
+                width: 400,
+                height: 400,
               ),
+              Container(
+                    padding: EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        onPressed: (){
+
+                        },
+                        child: Text("로그인",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        ),
+                    ),
+                  ),
               SizedBox(width: 20,),
               Container(
                   padding: EdgeInsets.all(0),
                   child: ElevatedButton(
                       onPressed: (){
-
+                        Navigator.pushNamed(context, '/signup');
                       },
                       child: Text("회원가입",
                       style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
                       ),
                       ),
                   )
@@ -92,6 +108,14 @@ class _MyPageState extends State<MyPage> {
   }
 }
 
+
+
+
+
+
+
+
+// 애니메이션 stateful widget
 class BouncingLetter extends StatefulWidget {
   final String char; // 텍스트
   final int delayMs; // 지연시간
