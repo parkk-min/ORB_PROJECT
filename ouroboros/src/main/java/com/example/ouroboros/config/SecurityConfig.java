@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/**").permitAll();
-                    authorize.requestMatchers("/", "/login", "/join", "/word", "/game").permitAll();
+                    authorize.requestMatchers("/", "/login", "/join", "/word").permitAll();
                     authorize.anyRequest().authenticated();
                 })
                 .cors(cors -> cors.configurationSource(request -> {
