@@ -19,7 +19,12 @@ public class UserDAO {
 
     // 회원가입
 //    public UserEntity addUser(UserEntity user) {
-//
+//        UserEntity userEntity = UserEntity.builder()
+//                .username(user.getUsername())
+//                .password(passwordEncoder.encode(user.getPassword()))
+//                .role(user.getRole())
+//                .phone(user.getPhone())
+//                .build();
 //    }
 
 }
