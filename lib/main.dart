@@ -33,6 +33,9 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+
+  bool changeBox = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,35 +74,68 @@ class _MyPageState extends State<MyPage> {
                 width: 400,
                 height: 400,
               ),
+              // 삼항 연산자
+              changeBox ? 
               Container(
-                    padding: EdgeInsets.all(10),
-                    child: ElevatedButton(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
                         onPressed: (){
 
                         },
-                        child: Text("로그인",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                        ),
+                        child: Text("게임 시작", style: TextStyle(fontSize: 20))
                     ),
+                    SizedBox(width: 10,),
+                    ElevatedButton(
+                        onPressed: (){
+                          setState(() {
+                            changeBox = false;
+                          });
+                        },
+                        child: Text("로그아웃", style: TextStyle(fontSize: 20))
+                    ),
+                  ],
+                ),
+              )
+                  :
+              Column(
+                children: [
+                  Container(
+                        padding: EdgeInsets.all(10),
+                        child: ElevatedButton(
+                            onPressed: (){
+                              setState(() {
+                                changeBox = true;
+                              });
+                            },
+                            child: Text("로그인",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            ),
+                        ),
+                      ),
+                  SizedBox(width: 20,),
+
+                  Container(
+                      padding: EdgeInsets.all(0),
+                      child: ElevatedButton(
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: Text("회원가입",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                          ),
+                      )
                   ),
-              SizedBox(width: 20,),
-              Container(
-                  padding: EdgeInsets.all(0),
-                  child: ElevatedButton(
-                      onPressed: (){
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                      child: Text("회원가입",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      ),
-                  )
-              ),
+                ]
+              )
             ],
           )
             ],

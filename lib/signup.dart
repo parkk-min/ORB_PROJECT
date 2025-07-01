@@ -46,6 +46,7 @@ class _SignupState extends State<Signup> {
                         children: [
                           // 아이디
                           TextFormField(
+                            controller: _usernameController,
                             key: ValueKey(1),
                             validator: (value){
                               if(value!.isEmpty){
@@ -66,6 +67,7 @@ class _SignupState extends State<Signup> {
                           SizedBox(height: 10,),
                           //비밀번호
                           TextFormField(
+                            controller: _passwordController,
                             key: ValueKey(2),
                             validator: (value){
                               if(value!.isEmpty){
@@ -87,6 +89,7 @@ class _SignupState extends State<Signup> {
                           SizedBox(height: 10,),
                           // 전화번호
                           TextFormField(
+                            controller: _phoneController,
                             key: ValueKey(3),
                             validator: (value){
                               if(value!.isEmpty){
@@ -107,7 +110,7 @@ class _SignupState extends State<Signup> {
                           SizedBox(height: 5,),
                           ElevatedButton(
                               onPressed: (){
-
+                                _submitSignup();
                               },
                               child: Text("가입"))
                         ],
