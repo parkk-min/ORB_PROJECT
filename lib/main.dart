@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ouroboros/login.dart';
+import 'package:ouroboros/gamepage.dart';
 import 'dart:async';
 
 import 'package:ouroboros/signup.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/':(context)=> MyPage(),
         '/login':(context)=> Login(),
         '/signup':(context)=>Signup(),
+        '/gamePage':(context)=>Gamepage(),
       },
     );
   }
@@ -63,13 +65,13 @@ class _MyPageState extends State<MyPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BouncingLetter(char: "끝",delayMs: 600,),
+              BouncingLetter(char: "끝",delayMs: 0,),
               SizedBox(width: 20,),
-              BouncingLetter(char: "말",delayMs: 1500,),
+              BouncingLetter(char: "말",delayMs: 500,),
               SizedBox(width: 20,),
-              BouncingLetter(char: "잇",delayMs: 2200,),
+              BouncingLetter(char: "잇",delayMs: 1000,),
               SizedBox(width: 20,),
-              BouncingLetter(char: "기",delayMs: 2900,),
+              BouncingLetter(char: "기",delayMs: 1500,),
               SizedBox(height: 30,)
                 ],
               ),
@@ -91,7 +93,7 @@ class _MyPageState extends State<MyPage> {
                   children: [
                     ElevatedButton(
                         onPressed: (){
-
+                          Navigator.pushNamed(context, "/gamePage");
                         },
                         child: Text("게임 시작", style: TextStyle(fontSize: 20))
                     ),
