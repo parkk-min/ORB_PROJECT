@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "usedwords")
 public class UsedWordsEntity {
 
+    public static enum WinStatus {
+        WIN, LOSE, UNDECIDED;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -31,6 +35,7 @@ public class UsedWordsEntity {
     @Column(name = "log", length = 500)
     private String log;
 
-    @Column(name = "win")
-    private Boolean win;
+    @Column(name = "result")
+    @Enumerated(EnumType.STRING)
+    private WinStatus result;
 }
