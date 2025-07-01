@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:ouroboros/login.dart';
 import 'dart:async';
 
 import 'package:ouroboros/signup.dart';
+import 'package:ouroboros/userinfo.dart';
+import 'package:ouroboros/wordprovider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(create: (context)=>WordProvider(),
+          child: const MyApp()
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         '/':(context)=> MyPage(),
+        '/login':(context)=> Login(),
         '/signup':(context)=>Signup(),
       },
     );
@@ -31,9 +40,8 @@ class MyPage extends StatefulWidget {
   @override
   State<MyPage> createState() => _MyPageState();
 }
-
 class _MyPageState extends State<MyPage> {
-
+  String? currentUser = null;
   bool changeBox = false;
 
   @override
@@ -90,8 +98,12 @@ class _MyPageState extends State<MyPage> {
                     SizedBox(width: 10,),
                     ElevatedButton(
                         onPressed: (){
+                          // 게임 내용 저장 하는 api 필요.
+                          context.read<WordProvider>().reset();
                           setState(() {
+                            currentUser = null;
                             changeBox = false;
+                            showSnackBar(context, "로그아웃 되었습니다.");
                           });
                         },
                         child: Text("로그아웃", style: TextStyle(fontSize: 20))
@@ -105,10 +117,15 @@ class _MyPageState extends State<MyPage> {
                   Container(
                         padding: EdgeInsets.all(10),
                         child: ElevatedButton(
-                            onPressed: (){
-                              setState(() {
-                                changeBox = true;
-                              });
+                            onPressed: () async {
+                              final result = await Navigator.pushNamed(context, "/login");
+                              if (result is Map && result['loginFlag'] == true) {
+                                  showSnackBar(context, "${currentUser}님 환영합니다.");
+                                setState(() {
+                                  changeBox = true;
+                                  currentUser = result['user'].name;
+                                });
+                              }
                             },
                             child: Text("로그인",
                             style: TextStyle(
@@ -223,4 +240,10 @@ class _BouncingLetterState extends State<BouncingLetter> {
   }
 }
 
-
+void showSnackBar(BuildContext context, String message){
+  ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message),
+        duration: Duration(seconds: 2),
+      )
+  );
+}
