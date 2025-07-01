@@ -4,6 +4,8 @@ import com.example.ouroboros.data.entity.UsedWordsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UsedWordsRepository extends JpaRepository<UsedWordsEntity, Integer> {
     boolean existsByWordAndUser_Username(String word, String userUsername);
@@ -11,4 +13,6 @@ public interface UsedWordsRepository extends JpaRepository<UsedWordsEntity, Inte
     UsedWordsEntity findTopByUser_UsernameOrderByIdDesc(String username);
 
     void deleteByUser_Username(String username);
+
+    List<UsedWordsEntity> findAllByUser_Username(String username);
 }
