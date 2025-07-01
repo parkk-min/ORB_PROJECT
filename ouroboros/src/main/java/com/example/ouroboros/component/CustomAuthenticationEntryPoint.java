@@ -18,15 +18,17 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        Map<String, Object> responseData = new HashMap<>();
+        Map<String,Object> responseData = new HashMap<>();
         responseData.put("error", "Unauthorized");
-        responseData.put("message", "Access Denied");
-        ObjectMapper objectMapper = new ObjectMapper();
+        responseData.put("message","로그인 후 이용해 주세요");
+
+        ObjectMapper objectMapper = new ObjectMapper(); // 객체↔Json 변환기
         String jsonMessage = objectMapper.writeValueAsString(responseData);
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
         response.getWriter().write(jsonMessage);
     }
+
 }

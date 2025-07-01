@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,4 +41,11 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UsedWordsEntity> usedWords = new ArrayList<>();
+
+    @Size(max = 10)
+    @NotNull
+    @ColumnDefault("ROLE_USER")
+    @Column(name = "role", nullable = false, length = 10)
+    private String role;
+
 }

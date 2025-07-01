@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+// 로그인했지만 권한 없을 때
 @Component
-public class CustomerAccessDeniedHandler implements AccessDeniedHandler {
-
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("No Authority");
+        response.getWriter().write("권한이 없습니다.");
     }
 }
