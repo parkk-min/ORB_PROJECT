@@ -1,8 +1,8 @@
 package com.example.ouroboros.service;
 
 import com.example.ouroboros.data.dao.UserDAO;
+import com.example.ouroboros.data.dto.UserDTO;
 import com.example.ouroboros.data.entity.UserEntity;
-import com.example.ouroboros.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +20,7 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     private final UserDAO userDAO;
 
+    // 인증처리 - 사용자정보 DB에서 로딩
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = this.userDAO.findByUsername(username);
@@ -31,6 +32,33 @@ public class UserService implements UserDetailsService {
         grantedAuthorities.add(new SimpleGrantedAuthority(userEntity.getRole()));
         return new User(userEntity.getUsername(), userEntity.getPassword(), grantedAuthorities);
     }
+
+    // 회원가입
+    public UserDTO addUser(UserDTO userDTO) {
+        if (isNullOrBlank(userDTO.getUsername()) || isNullOrBlank(userDTO.getPassword()) || isNullOrBlank(userDTO.getName())) {
+            throw new IllegalArgumentException("필수값 누락");
+        }
+        if (this.userDAO.findByUsername(userDTO.getUsername()) != null) {
+            throw new IllegalArgumentException("Username already exists 동일아이디 존재");
+        }
+        UserEntity userEntity = UserEntity.builder()
+                .username(userDTO.getUsername())
+                .password(userDTO.getPassword())
+                .name(userDTO.getName())
+                .phone(userDTO.getPhone())
+                .build();
+        this.userDAO.addUser(userEntity); // 저장
+        UserDTO saveUserDTO = UserDTO.builder() // 비밀번호 제외
+                .username(userDTO.getUsername())
+                .name(userDTO.getName())
+                .phone(userDTO.getPhone())
+                .build();
+        return saveUserDTO;
+    }
+    private boolean isNullOrBlank(String str) {
+        return str == null || str.isBlank();
+    }
+
 
 
 }

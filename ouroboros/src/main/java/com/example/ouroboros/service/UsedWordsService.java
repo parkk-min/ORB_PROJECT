@@ -1,6 +1,7 @@
 package com.example.ouroboros.service;
 
 import com.example.ouroboros.data.dao.UsedWordsDAO;
+import com.example.ouroboros.data.dao.UserDAO;
 import com.example.ouroboros.data.dao.WordsDAO;
 import com.example.ouroboros.data.dto.UsedWordsDTO;
 import com.example.ouroboros.data.dto.WordsDTO;

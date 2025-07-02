@@ -25,8 +25,8 @@ public class UserEntity {
     private String username;
 
     @NotNull
-    @Size(max = 10)
-    @Column(name = "password", nullable = false, length = 10)
+    @Size(max = 100)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
     @NotNull

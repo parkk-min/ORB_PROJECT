@@ -18,8 +18,15 @@ public class UserDAO {
     }
 
     // 회원가입
-//    public UserEntity addUser(UserEntity user) {
-//
-//    }
+    public UserEntity addUser(UserEntity user) {
+        UserEntity userEntity = UserEntity.builder()
+                .username(user.getUsername())
+                .password(passwordEncoder.encode(user.getPassword()))
+                .name(user.getName())
+                .role("ROLE_USER")
+                .phone(user.getPhone())
+                .build();
+        return userRepository.save(userEntity);
+    }
 
 }
