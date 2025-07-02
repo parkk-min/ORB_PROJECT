@@ -17,6 +17,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +70,7 @@ class _SignupState extends State<Signup> {
                             key: ValueKey(2),
                             validator: (value){
                               if(value!.isEmpty){
-                                return "input username";
+                                return "input password";
                               }
                               return null;
                             },
@@ -91,7 +92,7 @@ class _SignupState extends State<Signup> {
                             key: ValueKey(3),
                             validator: (value){
                               if(value!.isEmpty){
-                                return "input username";
+                                return "input phone";
                               }
                               return null;
                             },
@@ -106,6 +107,26 @@ class _SignupState extends State<Signup> {
                             ),
                           ),
                           SizedBox(height: 5,),
+                          TextFormField(
+                            controller: _nameController,
+                            key: ValueKey(4),
+                            validator: (value){
+                              if(value!.isEmpty){
+                                return "input name";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                                icon: Icon(Icons.drive_file_rename_outline),
+                                hintText: "이름",
+                                contentPadding: EdgeInsets.all(10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.blueGrey,width: 2),
+                                )
+                            ),
+                          ),
+                          SizedBox(height: 10,),
                           ElevatedButton(
                               onPressed: (){
                                 _submitSignup();
@@ -127,6 +148,7 @@ class _SignupState extends State<Signup> {
       final username = _usernameController.text.trim();
       final password = _passwordController.text.trim();
       final phone = _phoneController.text.trim();
+      final name = _nameController.text.trim();
 
       final url = Uri.parse("http://10.0.2.2:8080/signup");
 
@@ -137,7 +159,8 @@ class _SignupState extends State<Signup> {
             body: jsonEncode({
               "username": username,
               "password": password,
-              "phone": phone
+              "phone": phone,
+              "name": name
             })
         );
         if (response.statusCode == 200) {
