@@ -18,6 +18,8 @@ class _GamepageState extends State<Gamepage> {
   final TextEditingController _controller = TextEditingController();
   int turnCount = 0; // 타이머를 재시작할 수 있게 만드는 값
   bool gameOver = false; // 타이머 종료 시 게임 종료 여부 체크
+  int mistakeCount = 0; // 틀린 횟수
+  final int maxMistakes = 3;
 
   List<String> validWords = [];
   List<String> usedWords = []; // 사용된 단어
@@ -26,6 +28,7 @@ class _GamepageState extends State<Gamepage> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     initializeGame();
   }
@@ -41,7 +44,7 @@ class _GamepageState extends State<Gamepage> {
             children: [
               CountdownTimer(
                 key: ValueKey(turnCount), // 이 값이 바뀌면 타이머 재시작됨
-                seconds: 20,
+                seconds: 40,
                 onTimeUp: () {
                   if (!gameOver && !isGameOver) { // 중복 실행 방지
                     setState(() {
@@ -90,6 +93,17 @@ class _GamepageState extends State<Gamepage> {
               ),
               SizedBox(height: 100),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(3, (index) {
+                  return Icon(
+                    Icons.favorite,
+                    color: index < (3 - mistakeCount) ? Colors.red : Colors.grey,
+                    size: 36,
+                  );
+                }),
+              ),
+              SizedBox(height: 10),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
@@ -131,15 +145,31 @@ class _GamepageState extends State<Gamepage> {
                       List<String> validWords = await fetchValidWords();
                       if (!validWords.contains(input)) {
                         showToast("유효하지 않은 단어입니다.");
+                        // 실수 카운트 증가
+                        setState(() {
+                          mistakeCount++;
+                        });
+
+                        if (mistakeCount >= maxMistakes) {
+                          showGameOverDialog(context);
+                        }
+
+                        return;
+                      }
+
+                      if (isGameOver) {
+                        showToast("게임이 종료되었습니다.");
                         return;
                       }
 
                       // ✅ 유효한 단어일 경우 → 타이머 재시작
                       setState(() {
-                        turnCount++; // 타이머 재시작
-                        currentWord = input;
-                        usedWords.add(input);
-                        _controller.clear();
+                        gameOver = false;
+                        isGameOver = false;
+                        mistakeCount = 0; // 초기화
+                        usedWords.clear();
+                        botStatus = "";
+                        turnCount++;
                       });
 
                       await submitWord(input);
@@ -159,8 +189,11 @@ class _GamepageState extends State<Gamepage> {
   void showToast(String msg) {
     Fluttertoast.showToast(
       msg: msg,
+      // 메세지
       toastLength: Toast.LENGTH_LONG,
+      // 출력시간
       gravity: ToastGravity.CENTER,
+      // 출력 위치
       backgroundColor: Colors.brown[200],
       textColor: Colors.white,
       fontSize: 20.0,
@@ -203,6 +236,7 @@ class _GamepageState extends State<Gamepage> {
       setState(() {
         currentWord = radomWord;
         validWords = words;
+
         _controller.clear(); // 입력창 초기화
       });
     } catch (e) {
@@ -212,7 +246,7 @@ class _GamepageState extends State<Gamepage> {
 
   // 봇
   Future<void> submitWord(String word) async {
-    if (isGameOver || gameOver) return;
+    if (isGameOver) return;
 
     // 사용자 입력 처리
     setState(() {
@@ -246,23 +280,18 @@ class _GamepageState extends State<Gamepage> {
           if (botWord != null) {
             currentWord = botWord;
             usedWords.add(botWord);
-            turnCount++; // 봇이 단어를 제시했을 때도 타이머 재시작
           } else {
             botStatus = "😵 봇이 더 이상 단어를 찾지 못했어요!";
-            isGameOver = true;
           }
-
-          if (gameOver) {
-            isGameOver = true;
-            this.gameOver = true;
-          }
-
-          if (!isGameOver && !this.gameOver) {
-            botStatus = "";
-          }
+          isGameOver = gameOver;
+          if (!gameOver) botStatus = "";
         });
 
-        if (gameOver || botWord == null) {
+        if (gameOver) {
+          showToast("게임이 종료되었습니다.");
+        }
+
+        if (botWord == null || gameOver) {
           showVictoryDialog(context);
         }
 
@@ -284,7 +313,7 @@ class _GamepageState extends State<Gamepage> {
   void showGameOverDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // 바깥 터치로 닫히지 않도록
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("게임 오버 😢"),
@@ -292,14 +321,10 @@ class _GamepageState extends State<Gamepage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/result", arguments: "패배").then((result) {
-                  if (result == "reset") {
-                    resetGame();
-                  }
-                });
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                resetGame(); // 게임 리셋 함수 실행
               },
-              child: Text("확인"),
+              child: Text("다시 시작"),
             ),
           ],
         );
@@ -319,16 +344,10 @@ class _GamepageState extends State<Gamepage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Future.delayed(Duration(milliseconds: 100), () {
-                  Navigator.pushNamed(context, "/result", arguments: "승리").then((result) {
-                    if (result == "reset") {
-                      resetGame();
-                    }
-                  });
-                });
+                Navigator.of(context).pop();
+                resetGame(); // 게임 리셋 함수 실행
               },
-              child: Text("확인"),
+              child: Text("다시 시작"),
             ),
           ],
         );
@@ -342,8 +361,9 @@ class _GamepageState extends State<Gamepage> {
       isGameOver = false;
       usedWords.clear();
       botStatus = "";
-      turnCount++; // 타이머 재시작을 위해 증가
+      turnCount++;
     });
     await initializeGame();
   }
+
 }
