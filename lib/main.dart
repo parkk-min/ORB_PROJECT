@@ -9,9 +9,10 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-      ChangeNotifierProvider(create: (context)=>WordProvider(),
-          child: const MyApp()
-      )
+    ChangeNotifierProvider(
+      create: (context) => WordProvider(),
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -25,10 +26,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       initialRoute: "/",
       routes: {
-        '/':(context)=> MyPage(),
-        '/login':(context)=> Login(),
-        '/signup':(context)=>Signup(),
-        '/gamePage':(context)=>Gamepage(),
+        '/': (context) => MyPage(),
+        '/login': (context) => Login(),
+        '/signup': (context) => Signup(),
+        '/gamePage': (context) => Gamepage(),
       },
     );
   }
@@ -40,45 +41,42 @@ class MyPage extends StatefulWidget {
   @override
   State<MyPage> createState() => _MyPageState();
 }
+
 class _MyPageState extends State<MyPage> {
-  UserInfo ?currentUser = null;
-  bool changeBox = false;
+  UserInfo? currentUser = null;
 
   @override
   Widget build(BuildContext context) {
-    WordProvider provider = context.read<WordProvider>();
+    WordProvider provider = context.watch<WordProvider>();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[500],
-        title: Text("OUROBOROS",
-        style:TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 25,
-        ),
+        title: Text(
+          "OUROBOROS",
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
         ),
         centerTitle: true,
       ),
 
-      // drawer: currentUser != null ? AccontDetailsDrawer(): null ,
-      drawer: AccontDetailsDrawer(),
+      drawer: provider.loginFlag ? AccontDetailsDrawer() : null,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BouncingLetter(char: "끝",delayMs: 0, fontSize: 22,),
-              SizedBox(width: 20,),
-              BouncingLetter(char: "말",delayMs: 500, fontSize: 22),
-              SizedBox(width: 20,),
-              BouncingLetter(char: "잇",delayMs: 1000, fontSize: 22),
-              SizedBox(width: 20,),
-              BouncingLetter(char: "기",delayMs: 1500,fontSize: 22),
-              SizedBox(height: 30,)
-                ],
-              ),
-          SizedBox(height: 40,),
+              BouncingLetter(char: "끝", delayMs: 0, fontSize: 22),
+              SizedBox(width: 20),
+              BouncingLetter(char: "말", delayMs: 500, fontSize: 22),
+              SizedBox(width: 20),
+              BouncingLetter(char: "잇", delayMs: 1000, fontSize: 22),
+              SizedBox(width: 20),
+              BouncingLetter(char: "기", delayMs: 1500, fontSize: 22),
+              SizedBox(height: 30),
+            ],
+          ),
+          SizedBox(height: 40),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -94,80 +92,77 @@ class _MyPageState extends State<MyPage> {
                 },
               ),
               // 삼항 연산자
-              changeBox ?
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: (){
-                          Navigator.pushNamed(context, "/gamePage");
-                        },
-                        child: Text("게임 시작", style: TextStyle(fontSize: 20))
-                    ),
-                    SizedBox(width: 10,),
-                    ElevatedButton(
-                        onPressed: (){
-                          // 게임 내용 저장 하는 api 필요.
-                          context.read<WordProvider>().reset();
-                          setState(() {
-                            currentUser = null;
-                            changeBox = false;
-                            showSnackBar(context, "로그아웃 되었습니다.");
-                          });
-                        },
-                        child: Text("로그아웃", style: TextStyle(fontSize: 20))
-                    ),
-                  ],
-                ),
-              )
-                  :
-              Column(
-                children: [
-                  Container(
-                        padding: EdgeInsets.all(10),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              final result = await Navigator.pushNamed(context, "/login");
-                              if (result is Map && result['loginFlag'] == true) {
-                                showSnackBar(context, "${currentUser!.name}님 환영합니다.");
-                                setState(() {
-                                  changeBox = true;
-                                  currentUser = result['user'];
-                                });
-                              }
+              provider.loginFlag
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/gamePage");
                             },
-                            child: Text("로그인",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
+                            child: Text(
+                              "게임 시작",
+                              style: TextStyle(fontSize: 20),
                             ),
-                            ),
-                        ),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              // 게임 내용 저장 하는 api 필요.
+                              context.read<WordProvider>().reset();
+                              setState(() {
+                                provider.loginFlagFalse();
+                                currentUser = null;
+                                showSnackBar(context, "로그아웃 되었습니다.");
+                              });
+                            },
+                            child: Text("로그아웃", style: TextStyle(fontSize: 20)),
+                          ),
+                        ],
                       ),
-                  SizedBox(width: 20,),
+                    )
+                  : Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await Navigator.pushNamed(context, "/login");
+                            },
+                            child: Text(
+                              "로그인",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20),
 
-                  Container(
-                      padding: EdgeInsets.all(0),
-                      child: ElevatedButton(
-                          onPressed: (){
-                            Navigator.pushNamed(context, '/signup');
-                          },
-                          child: Text("회원가입",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
+                        Container(
+                          padding: EdgeInsets.all(0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/signup');
+                            },
+                            child: Text(
+                              "회원가입",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
                           ),
-                          ),
-                      )
-                  ),
-                ]
-              )
-            ],
-          )
+                        ),
+                      ],
+                    ),
             ],
           ),
+        ],
+      ),
     );
   }
 }
@@ -177,14 +172,18 @@ class BouncingLetter extends StatefulWidget {
   final String char; // 텍스트
   final int delayMs; // 지연시간
   final double fontSize; // 추가된 글자 크기 속성
-  const BouncingLetter({required this.char, this.delayMs = 0, this.fontSize=20, Key? key}) : super(key: key);
+  const BouncingLetter({
+    required this.char,
+    this.delayMs = 0,
+    this.fontSize = 20,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<BouncingLetter> createState() => _BouncingLetterState();
 }
 
 class _BouncingLetterState extends State<BouncingLetter> {
-
   double _scale = 1.0;
 
   @override
@@ -209,14 +208,13 @@ class _BouncingLetterState extends State<BouncingLetter> {
     setState(() => _scale = 1.0);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _animate,
       child: AnimatedScale(
-          scale: _scale,
-          duration: const Duration(milliseconds: 100),
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
         child: Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -228,7 +226,7 @@ class _BouncingLetterState extends State<BouncingLetter> {
                 color: Colors.black.withAlpha(100),
                 blurRadius: 3,
                 offset: const Offset(0, 6),
-              )
+              ),
             ],
           ),
           child: Text(
@@ -239,35 +237,33 @@ class _BouncingLetterState extends State<BouncingLetter> {
             ),
           ),
         ),
-
       ),
     );
   }
 }
 
-void showSnackBar(BuildContext context, String message){
+void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message),
-        duration: Duration(seconds: 2),
-      )
+    SnackBar(content: Text(message), duration: Duration(seconds: 2)),
   );
 }
 
-class AccontDetailsDrawer extends StatefulWidget {// 안바뀌는 값
+class AccontDetailsDrawer extends StatefulWidget {
+  // 안바뀌는 값
   const AccontDetailsDrawer({super.key});
 
-  final String phone="010-1234-5678";
-  final String address= "서울특별시 강남구";
-
+  final String phone = "010-1234-5678";
+  final String address = "서울특별시 강남구";
 
   @override
   State<AccontDetailsDrawer> createState() => _AccontDetailsDrawerState();
 }
 
-class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안에다가 넣어야 리렌더링 되게 값을 만들 수 있다.
+class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
+  // 이 안에다가 넣어야 리렌더링 되게 값을 만들 수 있다.
   bool showDetails = false;
   late WordProvider provider;
-  
+
   //설정 조정
   String selectedTheme = 'Light';
   Color bgColor = Colors.white; //기본
@@ -275,41 +271,44 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안�
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    provider = context.read<WordProvider>();
+    provider = context.watch<WordProvider>();
   }
 
   @override
   Widget build(BuildContext context) {
-    WordProvider provider =context.read<WordProvider>();
     return Drawer(
-      child: ListView(// 햄버거 탭 만들기, 여러가지 들어감
-        padding: EdgeInsets.zero,// 맨 위 줄 까지 채움
+      child: ListView(
+        // 햄버거 탭 만들기, 여러가지 들어감
+        padding: EdgeInsets.zero, // 맨 위 줄 까지 채움
         children: [
-          UserAccountsDrawerHeader(// 삼각형 조그를 제공하는 위젯
+          UserAccountsDrawerHeader(
+            // 삼각형 조그를 제공하는 위젯
             decoration: BoxDecoration(
-                color: Colors.blueGrey[400],// 윗 배경색
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20)
-                )
-            ),
-            accountName: Text("parksihyun",
-              style: TextStyle(
-                color: Colors.black87
+              color: Colors.blueGrey[400], // 윗 배경색
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
               ),
             ),
+            accountName: Text(
+              "parksihyun",
+              style: TextStyle(color: Colors.black87),
+            ),
             accountEmail: SizedBox.shrink(),
-            currentAccountPicture: CircleAvatar(// 사진이 먼저 나옴.
+            currentAccountPicture: CircleAvatar(
+              // 사진이 먼저 나옴.
               backgroundImage: AssetImage('images/박시현.png'),
               // backgroundColor: Colors.red[200],// 서클 아바타 색
             ),
-            onDetailsPressed: (){// 삼각형을 여기서 설정
-              setState(() {// 이렇게 해야 재랜더링 된다. 렌더링 관련이므로 이렇게 한다.
-                this.showDetails= !(this.showDetails);
+            onDetailsPressed: () {
+              // 삼각형을 여기서 설정
+              setState(() {
+                // 이렇게 해야 재랜더링 된다. 렌더링 관련이므로 이렇게 한다.
+                this.showDetails = !(this.showDetails);
               }); //
             },
           ),
-          if(this.showDetails)// 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
+          if (this.showDetails) // 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
             Padding(
               padding: EdgeInsets.zero,
               child: Container(
@@ -318,27 +317,24 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안�
                     Row(
                       children: [
                         IconButton(
-                            onPressed: (){
-                            },
-                            icon: Icon(Icons.supervised_user_circle)),
-                        Text("name : ${widget.phone}"
-                          ,style: TextStyle(
-                              fontSize: 15
-                          ),),
+                          onPressed: () {},
+                          icon: Icon(Icons.supervised_user_circle),
+                        ),
+                        Text(
+                          "name : ${widget.phone}",
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ],
                     ),
                     Row(
                       children: [
-                        IconButton(
-                            onPressed: (){
-                            },
-                            icon: Icon(Icons.phone)),
-                        Text("Phone : ${widget.phone}"
-                          ,style: TextStyle(
-                              fontSize: 15
-                          ),),
+                        IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
+                        Text(
+                          "Phone : ${widget.phone}",
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -365,9 +361,7 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안�
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              leading: Icon(Icons.settings,
-                color: Colors.grey[850],
-              ),
+              leading: Icon(Icons.settings, color: Colors.grey[850]),
               title: Text("Settings"),
               children: [
                 Text("테마 선택:", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -397,9 +391,7 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안�
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              leading: Icon(Icons.question_answer,
-                color: Colors.grey[850],
-              ),
+              leading: Icon(Icons.question_answer, color: Colors.grey[850]),
               title: Text("Q&A"),
               children: [
                 Padding(
@@ -415,10 +407,19 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {// 이 안�
               ],
             ),
           ),
+          ListTile(
+            leading: Icon(Icons.login_outlined),
+            title: Text("Log-out"),
+            onTap: () {
+              context.read<WordProvider>().reset();
+              setState(() {
+                provider.loginFlagFalse();
+                showSnackBar(context, "로그아웃 되었습니다.");
+              });
+            },
+          ),
         ],
       ),
     );
   }
 }
-
-

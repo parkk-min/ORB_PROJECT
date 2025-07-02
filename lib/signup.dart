@@ -18,8 +18,6 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,9 +152,7 @@ class _SignupState extends State<Signup> {
         }
 
       }catch(e){
-
       }
     }
   }
-
 }

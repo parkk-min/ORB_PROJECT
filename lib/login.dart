@@ -45,8 +45,9 @@ class _LoginState extends State<Login> {
 
         provider.refreshToken= refresh!;
         provider.accessToken= token!;
-        // this.currentUser = UserInfo.fromJson(decoded);
-        // provider.user=currentUser!;
+        this.currentUser = UserInfo.fromJson(decoded);
+        provider.user=currentUser!;//로그인시 해결
+        provider.loginFlagTrue();
 
         return true;
       } else if(response.statusCode==401){
@@ -115,10 +116,7 @@ class _LoginState extends State<Login> {
                         final response = await loginRequest();
                         if(response){
                           showSnackBar(context, "로그인 성공");
-                          Navigator.pop(context, {
-                            'loginFlag': true,
-                            'user': currentUser,
-                          });
+                          Navigator.pop(context,);
                         }
                       }
                     }, child: Text("로그인")

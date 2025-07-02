@@ -3,6 +3,8 @@ import 'package:ouroboros/userinfo.dart';
 import 'package:provider/provider.dart';
 
 class WordProvider extends ChangeNotifier{
+  bool _loginFlag=false;
+
   UserInfo? _user=null;
 
   String? _accessToken= null;
@@ -44,6 +46,23 @@ class WordProvider extends ChangeNotifier{
 
   void changeTheme(String theme) {
     _selectedTheme = theme;
+    notifyListeners();
+  }
+
+
+  bool get loginFlag => _loginFlag;
+
+  set loginFlag(bool value) {
+    _loginFlag = value;
+  }
+
+  void loginFlagFalse() {
+    _loginFlag = false;
+    notifyListeners();
+  }
+
+  void loginFlagTrue() {
+    _loginFlag = true;
     notifyListeners();
   }
 
