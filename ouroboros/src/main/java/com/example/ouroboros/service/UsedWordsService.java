@@ -78,6 +78,8 @@ public class UsedWordsService {
         if (botWord == null) {  // 다음 단어가 없으면 게임 종료 표시
             response.put("error", "이어질 단어가 없음: " + input.getLastChar());
             response.put("gameOver", true);
+            response.put("winner", user);
+            response.put("message", "봇이 단어를 찾지 못했습니다. 사용자가 승리했습니다!");
             return response;
         }
 
@@ -97,8 +99,10 @@ public class UsedWordsService {
                 .lastChar(botWord.getLastChar())
                 .build();
 
+        response.put("gameOver", false);
         // "nextWord"가 서버에 보낼 프론트 키
         response.put("nextWord", botWordsDTO);
+        response.put("message", "봇의 단어: " + botWord.getWord());
         return response;
 
     }
@@ -134,6 +138,7 @@ public class UsedWordsService {
     public void resetGame(String username) {
         usedWordsDAO.deleteByUser_Username(username);
     }
+
 }
 
 
