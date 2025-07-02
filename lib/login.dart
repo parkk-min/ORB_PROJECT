@@ -17,10 +17,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
-  UserInfo? currentUser= null;
+  UserInfo? currentUser;
 
-  String? username = null;
-  String? password = null;
+  String? username;
+  String? password;
 
   bool validation() {
     if (_formKey1.currentState!.validate()) {
@@ -45,7 +45,7 @@ class _LoginState extends State<Login> {
 
         provider.refreshToken= refresh!;
         provider.accessToken= token!;
-        this.currentUser = UserInfo.fromJson(decoded);
+        currentUser = UserInfo.fromJson(decoded);
         provider.user=currentUser!;//로그인시 해결
         provider.fakeUser=decoded['username']!;
         provider.loginFlagTrue();
@@ -58,7 +58,7 @@ class _LoginState extends State<Login> {
         showSnackBar(context, "Error:${response.statusCode}");
       }
     }catch (e) {
-      print("Error:${e}");
+      print("Error:$e");
     }
     return false;
   }

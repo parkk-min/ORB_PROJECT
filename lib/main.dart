@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ouroboros/login.dart';
 import 'package:ouroboros/gamepage.dart';
+import 'package:ouroboros/login.dart';
 import 'package:ouroboros/result.dart';
 import 'dart:async';
 import 'package:ouroboros/signup.dart';
@@ -45,7 +45,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  UserInfo? currentUser = null;
+  UserInfo? currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -178,8 +178,8 @@ class BouncingLetter extends StatefulWidget {
     required this.char,
     this.delayMs = 0,
     this.fontSize = 20,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<BouncingLetter> createState() => _BouncingLetterState();
@@ -306,11 +306,11 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
               // 삼각형을 여기서 설정
               setState(() {
                 // 이렇게 해야 재랜더링 된다. 렌더링 관련이므로 이렇게 한다.
-                this.showDetails = !(this.showDetails);
+                showDetails = !(showDetails);
               }); //
             },
           ),
-          if (this.showDetails) // 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
+          if (showDetails) // 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
             Padding(
               padding: EdgeInsets.zero,
               child: Container(
