@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "usedwords")
 public class UsedWordsEntity {
 
-    public static enum WinStatus {
+    public enum WinStatus {
         WIN, LOSE, UNDECIDED;
     }
 
