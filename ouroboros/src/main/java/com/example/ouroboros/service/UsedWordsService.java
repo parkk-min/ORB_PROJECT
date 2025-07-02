@@ -53,16 +53,16 @@ public class UsedWordsService {
             return response;
         }
 
-        // 끝말잇기 규칙 맞는지 확인: 이전에 쓴 단어의 마지막 글자와 현재 단어 첫 글자가 일치하는지
-        UsedWordsEntity lastUsed = usedWordsDAO.findTopByUser_UsernameOrderByIdDesc(username);
-        if (lastUsed != null) {  // 이전 단어가 있으면
-            WordsEntity lastWord = wordsDAO.findByWord(lastUsed.getWord());
-            // 이전 단어 마지막 글자와 현재 단어 첫 글자 비교
-            if (lastWord == null || !lastWord.getLastChar().equals(input.getFirstChar())) {
-                response.put("error", "끝말잇기 규칙에 맞지 않음: " + input.getWord());
-                return response;
-            }
-        }
+//        // 끝말잇기 규칙 맞는지 확인: 이전에 쓴 단어의 마지막 글자와 현재 단어 첫 글자가 일치하는지
+//        UsedWordsEntity lastUsed = usedWordsDAO.findTopByUser_UsernameOrderByIdDesc(username);
+//        if (lastUsed != null) {  // 이전 단어가 있으면
+//            WordsEntity lastWord = wordsDAO.findByWord(lastUsed.getWord());
+//            // 이전 단어 마지막 글자와 현재 단어 첫 글자 비교
+//            if (lastWord == null || !lastWord.getLastChar().equals(input.getFirstChar())) {
+//                response.put("error", "끝말잇기 규칙에 맞지 않음: " + input.getWord());
+//                return response;
+//            }
+//        }
 
         // 사용자 단어 기록 저장
         UsedWordsEntity usedWord = new UsedWordsEntity();

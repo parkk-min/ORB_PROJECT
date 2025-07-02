@@ -50,7 +50,7 @@ public class SecurityConfig {
                 // 요청별 권한
                 .authorizeHttpRequests(requests -> {
 //                    requests.requestMatchers("**").permitAll(); // 임시
-                    requests.requestMatchers("/", "/login", "/reissue","/signup").permitAll(); // 누구나 접근가능
+                    requests.requestMatchers("/", "/login", "/reissue","/signup","/**").permitAll(); // 누구나 접근가능
                     requests.requestMatchers("/admin/**").hasRole("ADMIN"); // 관리자만 접근가능
                     requests.anyRequest().authenticated(); // 그외는 인증필요
                 })

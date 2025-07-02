@@ -18,7 +18,7 @@ public interface WordsRepository extends JpaRepository<WordsEntity, Integer> {
     @Query(value = """
             SELECT * FROM words w 
             WHERE w.firstchar = :firstchar
-            AND w.word NOT IN (SELECT uw.word FROM used_words uw)
+            AND w.word NOT IN (SELECT uw.word FROM usedwords uw)
             ORDER BY RAND()
             LIMIT 1
             """, nativeQuery = true)
