@@ -291,7 +291,7 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
               ),
             ),
             accountName: Text(
-              "parksihyun",
+              provider.fakeUser,
               style: TextStyle(color: Colors.black87),
             ),
             accountEmail: SizedBox.shrink(),

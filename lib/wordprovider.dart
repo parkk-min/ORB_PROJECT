@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 class WordProvider extends ChangeNotifier{
   bool _loginFlag=false;
+  String? _fakeUser=null;
 
   UserInfo? _user=null;
 
@@ -66,4 +67,9 @@ class WordProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  String get fakeUser => _fakeUser!;
+
+  set fakeUser(String value) {
+    _fakeUser = value;
+  }
 }
