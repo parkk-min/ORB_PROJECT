@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class UserInfo{
   final String username;
-  final String password;
+  final String? password;
   final String? name;
   final String? phone;
 
-  UserInfo({required this.username, required this.password, this.name, this.phone});
+  UserInfo({required this.username, this.password, this.name, this.phone});
 
   factory UserInfo.fromJson(Map<String, dynamic> json){
     return UserInfo(
