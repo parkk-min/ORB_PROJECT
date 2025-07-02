@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ouroboros/login.dart';
 import 'package:ouroboros/gamepage.dart';
+import 'package:ouroboros/result.dart';
 import 'dart:async';
 import 'package:ouroboros/signup.dart';
 import 'package:ouroboros/userinfo.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/signup': (context) => Signup(),
         '/gamePage': (context) => Gamepage(),
+        '/result':(context)=> Result()
       },
     );
   }
@@ -416,6 +418,13 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                 provider.loginFlagFalse();
                 showSnackBar(context, "로그아웃 되었습니다.");
               });
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.login_outlined),
+            title: Text("리절트 화면"),
+            onTap: () {
+              Navigator.pushNamed(context, "/result");
             },
           ),
         ],

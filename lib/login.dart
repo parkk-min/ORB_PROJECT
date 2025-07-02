@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
         provider.accessToken= token!;
         this.currentUser = UserInfo.fromJson(decoded);
         provider.user=currentUser!;//로그인시 해결
-        provider.fakeUser=username!;
+        provider.fakeUser=decoded['username']!;
         provider.loginFlagTrue();
 
         return true;
