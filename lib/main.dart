@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ouroboros/login.dart';
 import 'package:ouroboros/gamepage.dart';
+import 'package:ouroboros/login.dart';
 import 'package:ouroboros/result.dart';
 import 'dart:async';
 import 'package:ouroboros/signup.dart';
