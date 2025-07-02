@@ -36,5 +36,12 @@ public class UsedWordsDAO {
     public List<UsedWordsEntity> findAllByUser_Username(String username) {
         return usedWordsRepository.findAllByUser_Username(username);
     }
+
+    public void deleteUndecidedExceptLast(String username, int lastUsedId) {
+        usedWordsRepository.deleteByUser_UsernameAndResultAndIdNot(
+                username, UsedWordsEntity.WinStatus.UNDECIDED, lastUsedId
+        );
+    }
+
 }
 
