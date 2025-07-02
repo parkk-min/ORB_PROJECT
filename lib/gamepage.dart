@@ -26,7 +26,6 @@ class _GamepageState extends State<Gamepage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initializeGame();
   }
@@ -44,12 +43,14 @@ class _GamepageState extends State<Gamepage> {
                 key: ValueKey(turnCount), // 이 값이 바뀌면 타이머 재시작됨
                 seconds: 20,
                 onTimeUp: () {
-                  setState(() {
-                    gameOver = true;
-                  });
-                  showGameOverDialog(context);
-                  // 패배 처리 로직 실행
-                  print("패배! 시간 초과됨");
+                  if (!gameOver && !isGameOver) { // 중복 실행 방지
+                    setState(() {
+                      gameOver = true;
+                      isGameOver = true;
+                    });
+                    showGameOverDialog(context);
+                    print("패배! 시간 초과됨");
+                  }
                 },
               ),
               Image.asset("images/bot.png", width: 200, height: 100),
@@ -107,6 +108,11 @@ class _GamepageState extends State<Gamepage> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
+                      if (gameOver || isGameOver) {
+                        showToast("게임이 종료되었습니다.");
+                        return;
+                      }
+
                       String input = _controller.text.trim();
                       if (input.isEmpty) {
                         showToast("단어를 입력하세요.");
@@ -125,11 +131,6 @@ class _GamepageState extends State<Gamepage> {
                       List<String> validWords = await fetchValidWords();
                       if (!validWords.contains(input)) {
                         showToast("유효하지 않은 단어입니다.");
-                        return;
-                      }
-
-                      if (isGameOver) {
-                        showToast("게임이 종료되었습니다.");
                         return;
                       }
 
@@ -158,11 +159,8 @@ class _GamepageState extends State<Gamepage> {
   void showToast(String msg) {
     Fluttertoast.showToast(
       msg: msg,
-      // 메세지
       toastLength: Toast.LENGTH_LONG,
-      // 출력시간
       gravity: ToastGravity.CENTER,
-      // 출력 위치
       backgroundColor: Colors.brown[200],
       textColor: Colors.white,
       fontSize: 20.0,
@@ -205,7 +203,6 @@ class _GamepageState extends State<Gamepage> {
       setState(() {
         currentWord = radomWord;
         validWords = words;
-
         _controller.clear(); // 입력창 초기화
       });
     } catch (e) {
@@ -215,7 +212,7 @@ class _GamepageState extends State<Gamepage> {
 
   // 봇
   Future<void> submitWord(String word) async {
-    if (isGameOver) return;
+    if (isGameOver || gameOver) return;
 
     // 사용자 입력 처리
     setState(() {
@@ -249,18 +246,23 @@ class _GamepageState extends State<Gamepage> {
           if (botWord != null) {
             currentWord = botWord;
             usedWords.add(botWord);
+            turnCount++; // 봇이 단어를 제시했을 때도 타이머 재시작
           } else {
             botStatus = "😵 봇이 더 이상 단어를 찾지 못했어요!";
+            isGameOver = true;
           }
-          isGameOver = gameOver;
-          if (!gameOver) botStatus = "";
+
+          if (gameOver) {
+            isGameOver = true;
+            this.gameOver = true;
+          }
+
+          if (!isGameOver && !this.gameOver) {
+            botStatus = "";
+          }
         });
 
-        if (gameOver) {
-          showToast("게임이 종료되었습니다.");
-        }
-
-        if (botWord == null || gameOver) {
+        if (gameOver || botWord == null) {
           showVictoryDialog(context);
         }
 
@@ -282,7 +284,7 @@ class _GamepageState extends State<Gamepage> {
   void showGameOverDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, // 바깥 터치로 닫히지 않도록
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("게임 오버 😢"),
@@ -290,10 +292,14 @@ class _GamepageState extends State<Gamepage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-                resetGame(); // 게임 리셋 함수 실행
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/result", arguments: "패배").then((result) {
+                  if (result == "reset") {
+                    resetGame();
+                  }
+                });
               },
-              child: Text("다시 시작"),
+              child: Text("확인"),
             ),
           ],
         );
@@ -313,10 +319,16 @@ class _GamepageState extends State<Gamepage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                resetGame(); // 게임 리셋 함수 실행
+                Navigator.pop(context);
+                Future.delayed(Duration(milliseconds: 100), () {
+                  Navigator.pushNamed(context, "/result", arguments: "승리").then((result) {
+                    if (result == "reset") {
+                      resetGame();
+                    }
+                  });
+                });
               },
-              child: Text("다시 시작"),
+              child: Text("확인"),
             ),
           ],
         );
@@ -330,9 +342,8 @@ class _GamepageState extends State<Gamepage> {
       isGameOver = false;
       usedWords.clear();
       botStatus = "";
-      turnCount++;
+      turnCount++; // 타이머 재시작을 위해 증가
     });
     await initializeGame();
   }
-
 }
