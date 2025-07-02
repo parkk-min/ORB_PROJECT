@@ -32,7 +32,7 @@ class _SignupState extends State<Signup> {
         ),
       ),
       body: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

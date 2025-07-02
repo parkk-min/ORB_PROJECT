@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ouroboros/userinfo.dart';
-import 'package:provider/provider.dart';
 
 class WordProvider extends ChangeNotifier{
   bool _loginFlag=false;
-  String? _fakeUser=null;
+  String? _fakeUser;
 
-  UserInfo? _user=null;
+  UserInfo? _user;
 
-  String? _accessToken= null;
-  String? _refreshToken= null;
+  String? _accessToken;
+  String? _refreshToken;
 
   String _selectedTheme="snake";
 

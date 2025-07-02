@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 class UserInfo{
   final String username;
@@ -20,8 +19,8 @@ class UserInfo{
 
   Map<String, dynamic> toJson(){
     return{
-      "username":this.username,
-      "password":this.password
+      "username":username,
+      "password":password
     };
   }
   // api보낼 다음 단계 준비 위해 객체로 맵을 만드는 함수.

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -44,7 +42,7 @@ class _GamepageState extends State<Gamepage> {
             children: [
               CountdownTimer(
                 key: ValueKey(turnCount), // 이 값이 바뀌면 타이머 재시작됨
-                seconds: 40,
+                seconds: 30,
                 onTimeUp: () {
                   if (!gameOver && !isGameOver) { // 중복 실행 방지
                     setState(() {
@@ -236,11 +234,16 @@ class _GamepageState extends State<Gamepage> {
       setState(() {
         currentWord = radomWord;
         validWords = words;
-
+        gameOver = false;
+        isGameOver = false;
+        mistakeCount = 0;
+        usedWords.clear();
+        botStatus = "";
+        turnCount++; // 타이머 재시작을 위해 turnCount 증가
         _controller.clear(); // 입력창 초기화
       });
     } catch (e) {
-      print("Error : ${e}");
+      print("Error : $e");
     }
   }
 
@@ -320,11 +323,20 @@ class _GamepageState extends State<Gamepage> {
           content: Text("시간 초과로 패배했습니다."),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-                resetGame(); // 게임 리셋 함수 실행
+              onPressed: () async {
+                Navigator.pop(context); // 다이얼로그 닫기
+                final result = await Navigator.pushNamed(
+                    context,
+                    "/result",
+                    arguments: "패배"
+                );
+
+                // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
+                if (result == "reset") {
+                  await resetGame();
+                }
               },
-              child: Text("다시 시작"),
+              child: Text("확인"),
             ),
           ],
         );
@@ -343,11 +355,20 @@ class _GamepageState extends State<Gamepage> {
           content: Text("봇이 단어를 찾지 못했습니다.\n당신이 이겼어요!"),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                resetGame(); // 게임 리셋 함수 실행
+              onPressed: () async {
+                Navigator.pop(context); // 다이얼로그 닫기
+                final result = await Navigator.pushNamed(
+                    context,
+                    "/result",
+                    arguments: "승리"
+                );
+
+                // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
+                if (result == "reset") {
+                  await resetGame();
+                }
               },
-              child: Text("다시 시작"),
+              child: Text("확인"),
             ),
           ],
         );
@@ -355,15 +376,15 @@ class _GamepageState extends State<Gamepage> {
     );
   }
 
-  void resetGame() async {
+  // 게임 리셋 함수
+  Future<void> resetGame() async {
     setState(() {
       gameOver = false;
       isGameOver = false;
       usedWords.clear();
       botStatus = "";
-      turnCount++;
+      mistakeCount = 0;
     });
-    await initializeGame();
+    await initializeGame(); // 게임 초기화 (여기서 turnCount가 증가해서 타이머 재시작)
   }
-
 }
