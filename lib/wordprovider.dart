@@ -8,6 +8,8 @@ class WordProvider extends ChangeNotifier{
   String? _accessToken= null;
   String? _refreshToken= null;
 
+  String _selectedTheme="snake";
+
   String get accessToken => _accessToken!;
 
   set accessToken(String value) {
@@ -26,10 +28,22 @@ class WordProvider extends ChangeNotifier{
     _user = value;
   }
 
+
+  String get selectedTheme => _selectedTheme;
+
+  set selectedTheme(String value) {
+    _selectedTheme = value;
+  }
+
   void reset() {
     _user = null;
     _accessToken = null;
     _refreshToken = null;
+    notifyListeners();
+  }
+
+  void changeTheme(String theme) {
+    _selectedTheme = theme;
     notifyListeners();
   }
 

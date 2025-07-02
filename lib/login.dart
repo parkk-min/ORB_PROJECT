@@ -45,8 +45,8 @@ class _LoginState extends State<Login> {
 
         provider.refreshToken= refresh!;
         provider.accessToken= token!;
-        this.currentUser = UserInfo.fromJson(decoded);
-        provider.user=currentUser!;
+        // this.currentUser = UserInfo.fromJson(decoded);
+        // provider.user=currentUser!;
 
         return true;
       } else if(response.statusCode==401){
