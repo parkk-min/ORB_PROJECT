@@ -94,71 +94,71 @@ class _MyPageState extends State<MyPage> {
               // 삼항 연산자
               provider.loginFlag
                   ? Container(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, "/gamePage");
-                            },
-                            child: Text(
-                              "게임 시작",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              // 게임 내용 저장 하는 api 필요.
-                              context.read<WordProvider>().reset();
-                              setState(() {
-                                provider.loginFlagFalse();
-                                currentUser = null;
-                                showSnackBar(context, "로그아웃 되었습니다.");
-                              });
-                            },
-                            child: Text("로그아웃", style: TextStyle(fontSize: 20)),
-                          ),
-                        ],
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/gamePage");
+                      },
+                      child: Text(
+                        "게임 시작",
+                        style: TextStyle(fontSize: 20),
                       ),
-                    )
-                  : Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await Navigator.pushNamed(context, "/login");
-                            },
-                            child: Text(
-                              "로그인",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 20),
-
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/signup');
-                            },
-                            child: Text(
-                              "회원가입",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // 게임 내용 저장 하는 api 필요.
+                        context.read<WordProvider>().reset();
+                        setState(() {
+                          provider.loginFlagFalse();
+                          currentUser = null;
+                          showSnackBar(context, "로그아웃 되었습니다.");
+                        });
+                      },
+                      child: Text("로그아웃", style: TextStyle(fontSize: 20)),
+                    ),
+                  ],
+                ),
+              )
+                  : Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.pushNamed(context, "/login");
+                      },
+                      child: Text(
+                        "로그인",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                      child: Text(
+                        "회원가입",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
