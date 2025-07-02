@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:ouroboros/wordprovider.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import './countdownTimer.dart';
 
@@ -18,6 +20,7 @@ class _GamepageState extends State<Gamepage> {
   bool gameOver = false; // 타이머 종료 시 게임 종료 여부 체크
   int mistakeCount = 0; // 틀린 횟수
   final int maxMistakes = 3;
+  late WordProvider provider;
 
   List<String> validWords = [];
   List<String> usedWords = []; // 사용된 단어
@@ -29,6 +32,12 @@ class _GamepageState extends State<Gamepage> {
     // TODO: implement initState
     super.initState();
     initializeGame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    provider = Provider.of<WordProvider>(context, listen: false);
   }
 
   @override
@@ -265,7 +274,7 @@ class _GamepageState extends State<Gamepage> {
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "username": "aaa", // ← 여기는 실제 존재하는 유저로
+          "username": provider.user.username, // ← 여기는 실제 존재하는 유저로
           "word": word,
         }),
       );
