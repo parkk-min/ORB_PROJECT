@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface WordsRepository extends JpaRepository<WordsEntity, Integer> {
     WordsEntity findByWord(String word);
@@ -28,4 +30,8 @@ public interface WordsRepository extends JpaRepository<WordsEntity, Integer> {
             LIMIT 1
             """, nativeQuery = true)
     WordsEntity findRandomStartWord();
+
+    @Query(value = "SELECT word FROM words", nativeQuery = true)
+    List<String> findAllWords();
+
 }
