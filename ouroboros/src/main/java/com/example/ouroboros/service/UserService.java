@@ -59,6 +59,16 @@ public class UserService implements UserDetailsService {
         return str == null || str.isBlank();
     }
 
+    // 회원정보
+    public UserDTO findUserByUsername(String username) {
+        UserEntity userEntity = this.userDAO.findByUsername(username);
+        return UserDTO.builder()
+                .username(userEntity.getUsername())
+                .name(userEntity.getName())
+                .phone(userEntity.getPhone())
+                .build();
+    }
+
 
 
 }
