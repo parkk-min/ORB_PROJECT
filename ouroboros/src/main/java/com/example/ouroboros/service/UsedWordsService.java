@@ -114,6 +114,9 @@ public class UsedWordsService {
         if (lastUsedWord != null) {
             lastUsedWord.setResult(result);
             usedWordsDAO.save(lastUsedWord);
+
+            // UNDECIDED 삭제
+            usedWordsDAO.deleteUndecidedExceptLast(username, lastUsedWord.getId());
         }
     }
 

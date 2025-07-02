@@ -15,4 +15,7 @@ public interface UsedWordsRepository extends JpaRepository<UsedWordsEntity, Inte
     void deleteByUser_Username(String username);
 
     List<UsedWordsEntity> findAllByUser_Username(String username);
+
+    void deleteByUser_UsernameAndResultAndIdNot(String username, UsedWordsEntity.WinStatus result, int excludeId);
+
 }
