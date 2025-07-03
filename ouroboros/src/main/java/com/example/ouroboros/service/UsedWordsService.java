@@ -136,6 +136,18 @@ public class UsedWordsService {
                 .collect(Collectors.toList());
     }
 
+    // 힌트 요청 시 특정 제시어 반환
+    public WordsDTO getHintWord() {
+        WordsEntity hint = wordsDAO.findByWord("바나나");
+
+        return WordsDTO.builder()
+                .id(hint.getId())
+                .word(hint.getWord())
+                .firstChar(hint.getFirstChar())
+                .lastChar(hint.getLastChar())
+                .build();
+    }
+
 
     // 게임 종료 시 사용자의 사용 단어 기록 삭제
     public void resetGame(String username) {
