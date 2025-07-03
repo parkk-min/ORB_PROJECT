@@ -79,4 +79,10 @@ class WordProvider extends ChangeNotifier{
   set history(List<Map<String, dynamic>> value) {
     _history = value;
   }
+
+  void updateHistory(List<Map<String, dynamic>> newHistory) {
+    _history = newHistory;
+    notifyListeners();
+  }
+
 }

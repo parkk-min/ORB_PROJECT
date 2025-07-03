@@ -346,7 +346,7 @@ class _GamepageState extends State<Gamepage> {
                 final result = await Navigator.pushReplacementNamed( // ✅ pushReplacement
                     context,
                     "/result",
-                    arguments: "패배"
+                    arguments: "LOSE"
                 );
 
                 // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
@@ -378,7 +378,7 @@ class _GamepageState extends State<Gamepage> {
                 final result = await Navigator.pushReplacementNamed(
                     context,
                     "/result",
-                    arguments: "승리"
+                    arguments: "WIN"
                 );
 
                 // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
