@@ -130,7 +130,6 @@ class _SignupState extends State<Signup> {
                           ElevatedButton(
                               onPressed: (){
                                 _submitSignup();
-                                Navigator.pushNamed(context, "/");
                               },
                               child: Text("가입"))
                         ],
@@ -166,9 +165,14 @@ class _SignupState extends State<Signup> {
         );
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("회원가입 성공!")),
+            SnackBar(content: Text("✅회원가입 성공!")),
           );
+          Navigator.pushNamed(context, "/");
           // 회원가입 성공 후 처리 (예: 화면 이동)
+        } else if(response.statusCode == 409){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("❌ 이미 존재하는 아이디입니다.")),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("회원가입 실패: ${response.body}")),
@@ -176,7 +180,10 @@ class _SignupState extends State<Signup> {
         }
 
       }catch(e){
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("🚨 오류 발생: $e")),
+        );
       }
     }
   }
-}
+  }
