@@ -27,7 +27,7 @@ class _ResultState extends State<Result> {
   }
 
 
-  void submitResult() async{
+  Future<void> submitResult() async{
     final url = Uri.parse("http://10.0.2.2:8080/game/result");
 
     try{
@@ -41,11 +41,11 @@ class _ResultState extends State<Result> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("게임 기록 경신")),
+          SnackBar(content: Text("게임 기록 갱신")),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("게임 기록 경신 실패: ${response.body}")),
+          SnackBar(content: Text("게임 기록 갱신 실패: ${response.body}")),
         );
       }
     }catch(e){
@@ -110,10 +110,10 @@ class _ResultState extends State<Result> {
                 children: [
                   Text("멋진 게임이었습니다.", style: TextStyle(fontSize: 20),),
                   Text("게임의 결과는?",style: TextStyle(fontSize: 20),),
-                  Icon(result=="승리"?Icons.celebration:Icons.face_unlock_rounded,
+                  Icon(result=="WIN"?Icons.celebration:Icons.face_unlock_rounded,
                     size: 30,
                   ),
-                  Text(result=="승리"?"승리":"패배",style: TextStyle(fontSize: 20),),
+                  Text(result=="WIN"?"승리":"패배",style: TextStyle(fontSize: 20),),
                 ],
               ),
             ),
@@ -123,10 +123,10 @@ class _ResultState extends State<Result> {
                 Container(
                   child: ElevatedButton(
                       onPressed: ()async {
-                        submitResult();
+                        await submitResult();
                         final newHistory = await fetchGameHistory(provider.user.username!);
                         provider.updateHistory(newHistory);
-                        Navigator.pushNamedAndRemoveUntil( // ✅ 스택 전체 제거
+                        await Navigator.pushNamedAndRemoveUntil( // ✅ 스택 전체 제거
                           context,
                           "/",
                               (route) => false,
@@ -138,7 +138,7 @@ class _ResultState extends State<Result> {
                 Container(
                     child: ElevatedButton(
                         onPressed:() async {
-                          submitResult();
+                          await submitResult();
                           final newHistory = await fetchGameHistory(provider.user.username!);
                           provider.updateHistory(newHistory);
                           Navigator.pushReplacementNamed(context, "/gamePage");

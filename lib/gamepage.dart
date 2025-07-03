@@ -194,6 +194,28 @@ class _GamepageState extends State<Gamepage> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  provider.user.role=="ROLE_ADMIN"?
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final hintWord = await fetchHintWord();
+                        setState(() {
+                          currentWord = hintWord;
+                          usedWords.clear(); // 기존 단어 초기화 (선택 사항)
+                          turnCount++; // 타이머 재시작
+                        });
+                        showToast("힌트 단어로 '${hintWord}'가 설정되었습니다.");
+                      } catch (e) {
+                        showToast("힌트 요청 실패: $e");
+                      }
+                    },
+                    child: Text("힌트 보기"),
+                  ):SizedBox.shrink(),
+                ],
+              )
             ],
           ),
         ),
@@ -283,38 +305,40 @@ class _GamepageState extends State<Gamepage> {
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "username": provider.user.username, // ← 여기는 실제 존재하는 유저로
+          "username": provider.user.username,
           "word": word,
         }),
       );
 
+      print("서버 응답: ${response.body}"); // ✅ 디버깅용 로그
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final nextWordData = data["nextWord"];
-        final botWord = nextWordData?["word"]; // null-safe 접근
         final gameOver = data["gameOver"] ?? false;
 
         // 봇 응답 딜레이
         await Future.delayed(Duration(milliseconds: 1300));
 
-        setState(() {
-          if (botWord != null) {
-            currentWord = botWord;
-            usedWords.add(botWord);
-          } else {
+        // ✅ 방어적 조건 처리
+        if (nextWordData == null || nextWordData["word"] == null || gameOver) {
+          setState(() {
+            isGameOver = true;
             botStatus = "😵 봇이 더 이상 단어를 찾지 못했어요!";
-          }
-          isGameOver = gameOver;
-          if (!gameOver) botStatus = "";
-        });
+          });
 
-        if (gameOver) {
-          showToast("게임이 종료되었습니다.");
-        }
-
-        if (botWord == null || gameOver) {
           showVictoryDialog(context);
+          return;
         }
+
+        // ✅ 정상적인 봇 단어가 존재할 때
+        final botWord = nextWordData["word"];
+        setState(() {
+          currentWord = botWord;
+          usedWords.add(botWord);
+          botStatus = "";
+          isGameOver = false;
+        });
 
       } else {
         showToast("서버 응답 오류: ${response.statusCode}");
@@ -329,6 +353,7 @@ class _GamepageState extends State<Gamepage> {
       });
     }
   }
+
 
   // 끝말잇기 졌을떄
   void showGameOverDialog(BuildContext context) {
@@ -363,7 +388,7 @@ class _GamepageState extends State<Gamepage> {
   }
 
   // 끝말잇기 이겼을때
-  void showVictoryDialog(BuildContext context) {
+  void showVictoryDialog(BuildContext context){
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -380,7 +405,6 @@ class _GamepageState extends State<Gamepage> {
                     "/result",
                     arguments: "WIN"
                 );
-
                 // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
                 if (result == "reset") {
                   await resetGame();
@@ -405,4 +429,18 @@ class _GamepageState extends State<Gamepage> {
     });
     await initializeGame(); // 게임 초기화 (여기서 turnCount가 증가해서 타이머 재시작)
   }
+
+  Future<String> fetchHintWord() async {
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8080/game/hint"),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['word']; // 'word' 필드 사용
+    } else {
+      throw Exception("힌트 단어를 불러오지 못했습니다.");
+    }
+  }
+
 }
