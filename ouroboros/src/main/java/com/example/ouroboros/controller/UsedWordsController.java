@@ -1,6 +1,7 @@
 package com.example.ouroboros.controller;
 
 import com.example.ouroboros.data.dto.UsedWordsDTO;
+import com.example.ouroboros.data.dto.WordsDTO;
 import com.example.ouroboros.data.entity.UsedWordsEntity;
 import com.example.ouroboros.service.UsedWordsService;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,14 @@ public class UsedWordsController {
         return ResponseEntity.ok(history);
     }
 
-    // 4) 게임 기록 초기화
+    // 힌트
+    @GetMapping("/hint")
+    public ResponseEntity<WordsDTO> giveHint() {
+        WordsDTO hintWord = usedWordsService.getHintWord();
+        return ResponseEntity.ok(hintWord);
+    }
+
+    // 게임 기록 초기화
     @PostMapping("/reset")
     public ResponseEntity<Void> resetGame(@RequestBody UsedWordsDTO request) {
         usedWordsService.resetGame(request.getUsername());
