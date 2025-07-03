@@ -98,34 +98,45 @@ class _LoginState extends State<Login> {
   }
 
   Future<List<Map<String, dynamic>>> fetchGameHistory(String username) async {
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/history'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"username": username}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/game/history'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"username": username}),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      // 메시지일 경우 예외 처리
-      if (data is Map && data.containsKey('message')) {
-        print(data['message']);
-        return [];
+        // 메시지일 경우 예외 처리
+        if (data is Map && data.containsKey('message')) {
+          print(data['message']);
+          return [];
+        }
+
+        // data가 List인지 확인
+        if (data is! List) {
+          print("예상치 못한 데이터 형식: $data");
+          return [];
+        }
+
+        // UNDECIDED 제외 필터링
+        final filtered = data
+            .where((e) => e is Map && (e["result"] == "WIN" || e["result"] == "LOSE"))
+            .cast<Map<String, dynamic>>()
+            .toList();
+
+        print("필터링된 결과: $filtered");
+        return filtered;
+      } else {
+        print("서버 에러: ${response.statusCode}");
+        return []; // 예외 대신 빈 리스트 반환
       }
-
-      // UNDECIDED 제외 필터링
-      final filtered = (data as List)
-          .where((e) =>
-      e["result"] == "WIN" || e["result"] == "LOSE")
-          .cast<Map<String, dynamic>>()
-          .toList();
-
-      return filtered;
-    } else {
-      throw Exception("서버 에러");
+    } catch (e) {
+      print("fetchGameHistory 에러: $e");
+      return []; // 모든 예외 상황에서 빈 리스트 반환
     }
   }
-
 
 
   @override
@@ -183,6 +194,7 @@ class _LoginState extends State<Login> {
                         if(response){
                           showSnackBar(context, "로그인 성공");
                           Navigator.pop(context,);
+
                         }
                       }
                     }, child: Text("로그인")

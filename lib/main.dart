@@ -274,6 +274,9 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    int winCount = provider.history?.where((e) => e['result'] == "WIN").length ?? 0;
+    int totalCount = provider.history?.length ?? 0;
+
     return Drawer(
       child: ListView(
         // 햄버거 탭 만들기, 여러가지 들어감
@@ -352,7 +355,8 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("15전 10승 5패"),
+                      child: Text("${totalCount}전 ${winCount}승 ${totalCount-winCount}패"),
+
                     ),
                   ),
                 ),
