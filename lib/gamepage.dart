@@ -21,6 +21,7 @@ class _GamepageState extends State<Gamepage> {
   int mistakeCount = 0; // 틀린 횟수
   final int maxMistakes = 3;
   late WordProvider provider;
+  bool _isDisposed = false;
 
   List<String> validWords = [];
   List<String> usedWords = []; // 사용된 단어
@@ -41,6 +42,14 @@ class _GamepageState extends State<Gamepage> {
   }
 
   @override
+  void dispose() {
+    _isDisposed = true;
+    gameOver = true; // ✅ 타이머 콜백 무효화
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("끝말잇기")),
@@ -50,10 +59,10 @@ class _GamepageState extends State<Gamepage> {
           child: Column(
             children: [
               CountdownTimer(
-                key: ValueKey(turnCount), // 이 값이 바뀌면 타이머 재시작됨
+                key: ValueKey(turnCount),
                 seconds: 30,
                 onTimeUp: () {
-                  if (!gameOver && !isGameOver) { // 중복 실행 방지
+                  if (!gameOver && !isGameOver && !_isDisposed && mounted) {
                     setState(() {
                       gameOver = true;
                       isGameOver = true;
@@ -334,7 +343,7 @@ class _GamepageState extends State<Gamepage> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context); // 다이얼로그 닫기
-                final result = await Navigator.pushNamed(
+                final result = await Navigator.pushReplacementNamed( // ✅ pushReplacement
                     context,
                     "/result",
                     arguments: "패배"
@@ -366,7 +375,7 @@ class _GamepageState extends State<Gamepage> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context); // 다이얼로그 닫기
-                final result = await Navigator.pushNamed(
+                final result = await Navigator.pushReplacementNamed(
                     context,
                     "/result",
                     arguments: "승리"
