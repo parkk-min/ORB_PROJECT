@@ -27,6 +27,7 @@ class _GamepageState extends State<Gamepage> {
   List<String> usedWords = []; // 사용된 단어
   bool isGameOver = false; // 게임 종료
   String botStatus = ""; // 봇의 텍스트 입력
+  String? errorMessage = null;
 
   @override
   void initState() {
@@ -429,15 +430,49 @@ class _GamepageState extends State<Gamepage> {
   }
 
   Future<String> fetchHintWord() async {
-    final response = await http.get(
-      Uri.parse("http://10.0.2.2:8080/game/hint"),
-    );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['word']; // 'word' 필드 사용
-    } else {
-      throw Exception("힌트 단어를 불러오지 못했습니다.");
+    final headers = {"authorization": provider.accessToken};
+    try{
+      final response = await http.get(
+          Uri.parse("http://10.0.2.2:8080/game/hint"),headers: headers
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['word']; // 'word' 필드 사용
+
+      } else if (response.statusCode == 403) {
+       return errorMessage = utf8.decode(
+          response.bodyBytes,
+        ); // 문자열은 그냥 유니코드로 디코드만 하면 됨.
+      } else if(response.statusCode==456){
+        await accessTokenRequest();
+        return await fetchHintWord();
+      } else {
+        throw Exception("힌트 단어를 불러오지 못했습니다.");
+      }
+    }catch(e){
+      print("Error: ${e}");
+      throw Exception("예외 발생: $e");
     }
   }
+
+  Future<void> accessTokenRequest() async{
+    print("액세스 토큰 재발급 요청");
+    final url= Uri.parse("http://10.0.2.2:8080/reissue");//(십,영,이,이)4가지
+    final header= {'Cookie': provider.refreshToken};
+
+    try{
+      final response = await http.post(url,headers: header);
+      if(response.statusCode ==200){
+        final accessToken = response.headers['authorization'];
+        provider.accessToken=accessToken!;
+      }else{
+        print("Error:${response.statusCode}");
+      }
+    }catch(e){
+      print("Error:${e}");
+    }
+  }
+
 }
