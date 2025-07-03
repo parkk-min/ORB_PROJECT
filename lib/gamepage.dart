@@ -194,6 +194,28 @@ class _GamepageState extends State<Gamepage> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  provider.user.role=="ROLE_ADMIN"?
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final hintWord = await fetchHintWord();
+                        setState(() {
+                          currentWord = hintWord;
+                          usedWords.clear(); // 기존 단어 초기화 (선택 사항)
+                          turnCount++; // 타이머 재시작
+                        });
+                        showToast("힌트 단어로 '${hintWord}'가 설정되었습니다.");
+                      } catch (e) {
+                        showToast("힌트 요청 실패: $e");
+                      }
+                    },
+                    child: Text("힌트 보기"),
+                  ):SizedBox.shrink(),
+                ],
+              )
             ],
           ),
         ),
@@ -404,5 +426,18 @@ class _GamepageState extends State<Gamepage> {
       mistakeCount = 0;
     });
     await initializeGame(); // 게임 초기화 (여기서 turnCount가 증가해서 타이머 재시작)
+  }
+
+  Future<String> fetchHintWord() async {
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8080/game/hint"),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['word']; // 'word' 필드 사용
+    } else {
+      throw Exception("힌트 단어를 불러오지 못했습니다.");
+    }
   }
 }
