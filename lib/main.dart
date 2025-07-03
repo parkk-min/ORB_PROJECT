@@ -363,7 +363,6 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                             child: Text(
                                 "${totalCount}전 ${winCount}승 ${totalCount -
                                     winCount}패"),
-
                           ),
                         ),
                       ),

@@ -4,15 +4,17 @@ class UserInfo{
   final String? password;
   final String? name;
   final String? phone;
+  final String? role;
 
-  UserInfo({required this.username, this.password, this.name, this.phone});
+  UserInfo({required this.username, this.password, this.name, this.phone,this.role});
 
   factory UserInfo.fromJson(Map<String, dynamic> json){
     return UserInfo(
         username: json['username'],
         password: json['password'],
         name: json['name'],
-        phone: json['phone']
+        phone: json['phone'],
+        role:json['role']
     );
   }
   // 서버 데이터로 맵 json으로 객체 만들기(폼 데이터 전송등에 사용)
