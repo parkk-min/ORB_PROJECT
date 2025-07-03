@@ -25,5 +25,4 @@ public class UserController {
         UserDTO userDTO = this.userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
-
 }

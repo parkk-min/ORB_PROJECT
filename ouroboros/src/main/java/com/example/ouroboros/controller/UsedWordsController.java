@@ -37,7 +37,7 @@ public class UsedWordsController {
         if (request.getUsername() == null || request.getResult() == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "username or result is missing"));
         }
-
+//result: "LOSE"
         try {
             UsedWordsEntity.WinStatus result = UsedWordsEntity.WinStatus.valueOf(String.valueOf(request.getResult()));
             usedWordsService.recordGameResult(request.getUsername(), result);

@@ -41,5 +41,4 @@ public class WordsService {
         // DB에서 단어 리스트 조회 (예: JPA repository 활용)
         return wordsRepository.findAllWords(); // 예시 메서드
     }
-
 }

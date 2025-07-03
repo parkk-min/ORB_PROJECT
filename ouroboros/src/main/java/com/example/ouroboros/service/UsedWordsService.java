@@ -8,6 +8,8 @@ import com.example.ouroboros.data.dto.WordsDTO;
 import com.example.ouroboros.data.entity.UsedWordsEntity;
 import com.example.ouroboros.data.entity.UserEntity;
 import com.example.ouroboros.data.entity.WordsEntity;
+import com.example.ouroboros.data.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -16,22 +18,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 @Service
 public class UsedWordsService {
     private final UsedWordsDAO usedWordsDAO;
     private final WordsDAO wordsDAO;
     private final UserDAO userDAO;
+    private final UserRepository userRepository;
 
-    public UsedWordsService(UsedWordsDAO usedWordsDAO, WordsDAO wordsDAO, UserDAO userDAO) {
+
+    public UsedWordsService(UsedWordsDAO usedWordsDAO, WordsDAO wordsDAO, UserDAO userDAO, UserRepository userRepository) {
         this.usedWordsDAO = usedWordsDAO;
         this.wordsDAO = wordsDAO;
         this.userDAO = userDAO;
+        this.userRepository = userRepository;
     }
 
     // 실제 끝말잇기 게임 로직 메서드
     // 사용자가 입력한 단어가 word로 들어온다.
-    public Map<String, Object> playWordGame(String word, String username) {
-        Map<String, Object> response = new HashMap<>();
+    public Map<String, Object> playWordGame(String word, String username) {Map<String, Object> response = new HashMap<>();
 
         // 유저가 존재하는지 DB에서 조회
         UserEntity user = userDAO.findByUsername(username);
@@ -98,16 +103,27 @@ public class UsedWordsService {
 
     }
 
-
     // 최신 단일 사용자가 낸 단어 기록에 승패 결과 저장
     public void recordGameResult(String username, UsedWordsEntity.WinStatus result) {
         UsedWordsEntity lastUsedWord = usedWordsDAO.findTopByUser_UsernameOrderByIdDesc(username);
-        if (lastUsedWord != null) {
-            lastUsedWord.setResult(result);
-            usedWordsDAO.save(lastUsedWord);
+        if(lastUsedWord == null || !lastUsedWord.getResult().equals(UsedWordsEntity.WinStatus.UNDECIDED)){
+            UserEntity player= userRepository.findById(username).orElse(null);
 
-            // UNDECIDED 삭제
-            usedWordsDAO.deleteUndecidedExceptLast(username, lastUsedWord.getId());
+            UsedWordsEntity usedWordsEntity= UsedWordsEntity.builder()
+                    .user(player)
+                    .word(null)
+                    .log(null)
+                    .result(UsedWordsEntity.WinStatus.valueOf("LOSE"))
+                    .build();
+            usedWordsDAO.save(usedWordsEntity);
+        }else{
+            if (lastUsedWord != null) {
+                lastUsedWord.setResult(result);
+                usedWordsDAO.save(lastUsedWord);
+
+                // UNDECIDED 삭제
+                usedWordsDAO.deleteUndecidedExceptLast(username, lastUsedWord.getId());
+            }
         }
     }
 

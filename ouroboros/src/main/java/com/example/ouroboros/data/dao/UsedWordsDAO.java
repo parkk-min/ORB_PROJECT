@@ -2,6 +2,7 @@ package com.example.ouroboros.data.dao;
 
 import com.example.ouroboros.data.entity.UsedWordsEntity;
 import com.example.ouroboros.data.repository.UsedWordsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +37,11 @@ public class UsedWordsDAO {
     public List<UsedWordsEntity> findAllByUser_Username(String username) {
         return usedWordsRepository.findAllByUser_Username(username);
     }
-
+    @Transactional
     public void deleteUndecidedExceptLast(String username, int lastUsedId) {
-        usedWordsRepository.deleteByUser_UsernameAndResultAndIdNot(
+        usedWordsRepository.deleteUndecidedExceptLast(
                 username, UsedWordsEntity.WinStatus.UNDECIDED, lastUsedId
         );
     }
-
 }
 
