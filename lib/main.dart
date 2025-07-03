@@ -274,157 +274,172 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    int winCount = provider.history?.where((e) => e['result'] == "WIN").length ?? 0;
-    int totalCount = provider.history?.length ?? 0;
+    return Consumer<WordProvider>(
+        builder: (context, provider, child) {
+          int winCount = provider.history?.where((e) => e['result'] == "WIN").length ?? 0;
+          int totalCount = provider.history?.length ?? 0;
 
-    return Drawer(
-      child: ListView(
-        // 햄버거 탭 만들기, 여러가지 들어감
-        padding: EdgeInsets.zero, // 맨 위 줄 까지 채움
-        children: [
-          UserAccountsDrawerHeader(
-            // 삼각형 조그를 제공하는 위젯
-            decoration: BoxDecoration(
-              color: Colors.blueGrey[400], // 윗 배경색
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-              ),
-            ),
-            accountName: Text(
-              provider.user.username,
-              style: TextStyle(color: Colors.black87),
-            ),
-            accountEmail: SizedBox.shrink(),
-            currentAccountPicture: CircleAvatar(
-              // 사진이 먼저 나옴.
-              backgroundImage: AssetImage(
-                availableImageNames.contains(provider.user.name)
-                    ? 'images/${provider.user.name}.png'
-                    : 'images/bot.png',
-              ),
-              // backgroundColor: Colors.red[200],// 서클 아바타 색
-            ),
-            onDetailsPressed: () {
-              // 삼각형을 여기서 설정
-              setState(() {
-                showDetails = !(showDetails);
-              }); //
-            },
-          ),
-          if (showDetails) // 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
-            Padding(
-              padding: EdgeInsets.zero,
-              child: Container(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.supervised_user_circle),
-                        ),
-                        Text(
-                          "name : ${provider.user.name}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
-                        Text(
-                          "Phone : ${provider.user.phone}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              leading: Icon(Icons.sports_kabaddi, color: Colors.grey[850]),
-              title: Text("내 전적보기"),
+          return Drawer(
+            child: ListView(
+              // 햄버거 탭 만들기, 여러가지 들어감
+              padding: EdgeInsets.zero, // 맨 위 줄 까지 채움
               children: [
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("${totalCount}전 ${winCount}승 ${totalCount-winCount}패"),
-
+                UserAccountsDrawerHeader(
+                  // 삼각형 조그를 제공하는 위젯
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey[400], // 윗 배경색
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              leading: Icon(Icons.settings, color: Colors.grey[850]),
-              title: Text("Settings"),
-              children: [
-                Text("테마 선택:", style: TextStyle(fontWeight: FontWeight.bold)),
-                RadioListTile<String>(
-                  title: Text('우르보르스 테마'),
-                  value: 'snake',
-                  groupValue: provider.selectedTheme,
-                  onChanged: (value) {
+                  accountName: Text(
+                    provider.user.username,
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  accountEmail: SizedBox.shrink(),
+                  currentAccountPicture: CircleAvatar(
+                    // 사진이 먼저 나옴.
+                    backgroundImage: AssetImage(
+                      availableImageNames.contains(provider.user.name)
+                          ? 'images/${provider.user.name}.png'
+                          : 'images/bot.png',
+                    ),
+                    // backgroundColor: Colors.red[200],// 서클 아바타 색
+                  ),
+                  onDetailsPressed: () {
+                    // 삼각형을 여기서 설정
                     setState(() {
-                      provider.changeTheme(value!);
+                      showDetails = !(showDetails);
+                    }); //
+                  },
+                ),
+                if (showDetails) // 바로 밑에 쓰면 조건에 따라 보여짐에 영향을 줌
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.supervised_user_circle),
+                              ),
+                              Text(
+                                "name : ${provider.user.name}",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                  onPressed: () {}, icon: Icon(Icons.phone)),
+                              Text(
+                                "Phone : ${provider.user.phone}",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    leading: Icon(
+                        Icons.sports_kabaddi, color: Colors.grey[850]),
+                    title: Text("내 전적보기"),
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                                "${totalCount}전 ${winCount}승 ${totalCount -
+                                    winCount}패"),
+
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    leading: Icon(Icons.settings, color: Colors.grey[850]),
+                    title: Text("Settings"),
+                    children: [
+                      Text("테마 선택:",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      RadioListTile<String>(
+                        title: Text('우르보르스 테마'),
+                        value: 'snake',
+                        groupValue: provider.selectedTheme,
+                        onChanged: (value) {
+                          setState(() {
+                            provider.changeTheme(value!);
+                          });
+                        },
+                      ),
+                      RadioListTile<String>(
+                        title: Text('?? 테마'),
+                        value: 'fairy',
+                        groupValue: provider.selectedTheme,
+                        onChanged: (value) {
+                          setState(() {
+                            provider.changeTheme(value!);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    leading: Icon(
+                        Icons.question_answer, color: Colors.grey[850]),
+                    title: Text("Q&A"),
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text("문의 이메일: himedia @ gannam.net"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.login_outlined),
+                  title: Text("Log-out"),
+                  onTap: () {
+                    context.read<WordProvider>().reset();
+                    setState(() {
+                      provider.loginFlagFalse();
+                      showSnackBar(context, "로그아웃 되었습니다.");
                     });
                   },
                 ),
-                RadioListTile<String>(
-                  title: Text('?? 테마'),
-                  value: 'fairy',
-                  groupValue: provider.selectedTheme,
-                  onChanged: (value) {
-                    setState(() {
-                      provider.changeTheme(value!);
-                    });
-                  },
-                ),
               ],
             ),
-          ),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              leading: Icon(Icons.question_answer, color: Colors.grey[850]),
-              title: Text("Q&A"),
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("문의 이메일: himedia @ gannam.net"),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.login_outlined),
-            title: Text("Log-out"),
-            onTap: () {
-              context.read<WordProvider>().reset();
-              setState(() {
-                provider.loginFlagFalse();
-                showSnackBar(context, "로그아웃 되었습니다.");
-              });
-            },
-          ),
-        ],
-      ),
+          );
+        }
     );
   }
 }
+
+
