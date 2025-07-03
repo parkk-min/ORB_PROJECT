@@ -45,8 +45,12 @@ class _ResultState extends State<Result> {
               children: [
                 Container(
                   child: ElevatedButton(
-                      onPressed:(){
-                        Navigator.pushNamed(context, "/");
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil( // ✅ 스택 전체 제거
+                          context,
+                          "/",
+                              (route) => false,
+                        );
                       },
                       child: Text("홈으로"))
                 ),
@@ -54,7 +58,7 @@ class _ResultState extends State<Result> {
                 Container(
                     child: ElevatedButton(
                         onPressed:(){
-                          Navigator.pop(context,"reset");
+                          Navigator.pushReplacementNamed(context, "/gamePage");
                         },
                         child: Text("다시하기"))
                 ),

@@ -130,6 +130,7 @@ class _SignupState extends State<Signup> {
                           ElevatedButton(
                               onPressed: (){
                                 _submitSignup();
+                                Navigator.pushNamed(context, "/");
                               },
                               child: Text("가입"))
                         ],

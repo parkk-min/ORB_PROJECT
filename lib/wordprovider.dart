@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ouroboros/userinfo.dart';
 
 class WordProvider extends ChangeNotifier{
+  List<Map<String, dynamic>>? _history;
+
   bool _loginFlag=false;
   String? _fakeUser;
 
@@ -70,5 +72,11 @@ class WordProvider extends ChangeNotifier{
 
   set fakeUser(String value) {
     _fakeUser = value;
+  }
+
+  List<Map<String, dynamic>> get history => _history!;
+
+  set history(List<Map<String, dynamic>> value) {
+    _history = value;
   }
 }

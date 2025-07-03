@@ -251,20 +251,16 @@ void showSnackBar(BuildContext context, String message) {
 }
 
 class AccontDetailsDrawer extends StatefulWidget {
-  // 안바뀌는 값
   const AccontDetailsDrawer({super.key});
-
-  final String phone = "010-1234-5678";
-  final String address = "서울특별시 강남구";
 
   @override
   State<AccontDetailsDrawer> createState() => _AccontDetailsDrawerState();
 }
 
 class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
-  // 이 안에다가 넣어야 리렌더링 되게 값을 만들 수 있다.
   bool showDetails = false;
   late WordProvider provider;
+  final List<String> availableImageNames = ['박민규','박시현', '장희용', '김준홍'];
 
   //설정 조정
   String selectedTheme = 'Light';
@@ -278,6 +274,9 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    int winCount = provider.history?.where((e) => e['result'] == "WIN").length ?? 0;
+    int totalCount = provider.history?.length ?? 0;
+
     return Drawer(
       child: ListView(
         // 햄버거 탭 만들기, 여러가지 들어감
@@ -293,19 +292,22 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
               ),
             ),
             accountName: Text(
-              provider.fakeUser,
+              provider.user.username,
               style: TextStyle(color: Colors.black87),
             ),
             accountEmail: SizedBox.shrink(),
             currentAccountPicture: CircleAvatar(
               // 사진이 먼저 나옴.
-              backgroundImage: AssetImage('images/박시현.png'),
+              backgroundImage: AssetImage(
+                availableImageNames.contains(provider.user.name)
+                    ? 'images/${provider.user.name}.png'
+                    : 'images/bot.png',
+              ),
               // backgroundColor: Colors.red[200],// 서클 아바타 색
             ),
             onDetailsPressed: () {
               // 삼각형을 여기서 설정
               setState(() {
-                // 이렇게 해야 재랜더링 된다. 렌더링 관련이므로 이렇게 한다.
                 showDetails = !(showDetails);
               }); //
             },
@@ -323,7 +325,7 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                           icon: Icon(Icons.supervised_user_circle),
                         ),
                         Text(
-                          "name : ${widget.phone}",
+                          "name : ${provider.user.name}",
                           style: TextStyle(fontSize: 15),
                         ),
                       ],
@@ -332,7 +334,7 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                       children: [
                         IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
                         Text(
-                          "Phone : ${widget.phone}",
+                          "Phone : ${provider.user.phone}",
                           style: TextStyle(fontSize: 15),
                         ),
                       ],
@@ -353,7 +355,8 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("15전 10승 5패"),
+                      child: Text("${totalCount}전 ${winCount}승 ${totalCount-winCount}패"),
+
                     ),
                   ),
                 ),
@@ -418,13 +421,6 @@ class _AccontDetailsDrawerState extends State<AccontDetailsDrawer> {
                 provider.loginFlagFalse();
                 showSnackBar(context, "로그아웃 되었습니다.");
               });
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.login_outlined),
-            title: Text("리절트 화면"),
-            onTap: () {
-              Navigator.pushNamed(context, "/result");
             },
           ),
         ],

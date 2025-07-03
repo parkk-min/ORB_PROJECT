@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 class CountdownTimer extends StatefulWidget {
@@ -26,12 +25,14 @@ class _CountdownTimerState extends State<CountdownTimer> {
     _remainingSeconds = widget.seconds;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingSeconds == 0) {
-        widget.onTimeUp(); // 시간이 다 되면 패배 처리
+        if (mounted) widget.onTimeUp(); // ✅ mounted 체크
         _timer?.cancel();
       } else {
-        setState(() {
-          _remainingSeconds--;
-        });
+        if (mounted) {
+          setState(() {
+            _remainingSeconds--;
+          });
+        }
       }
     });
   }
@@ -49,6 +50,4 @@ class _CountdownTimerState extends State<CountdownTimer> {
       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
     );
   }
-
-
 }
