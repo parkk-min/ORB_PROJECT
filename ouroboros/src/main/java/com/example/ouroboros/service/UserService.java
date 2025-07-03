@@ -66,9 +66,11 @@ public class UserService implements UserDetailsService {
                 .username(userEntity.getUsername())
                 .name(userEntity.getName())
                 .phone(userEntity.getPhone())
+                .role(userEntity.getRole())
                 .build();
     }
 
-
-
+    public boolean isUsernameTaken(String username) {
+        return userDAO.findByUsername(username) != null;
+    }
 }

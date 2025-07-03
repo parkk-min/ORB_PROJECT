@@ -15,8 +15,13 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<String> addUser(@RequestBody UserDTO userDTO) {
-        this.userService.addUser(userDTO);
-        return ResponseEntity.ok("User added. 가입성공");
+        if (userService.isUsernameTaken(userDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("이미 존재하는 아이디입니다.");
+        }
+
+        userService.addUser(userDTO);  // 중복 아니므로 정상 가입 처리
+        return ResponseEntity.ok("User added. 가입 성공");
     }
 
     // 회원정보
