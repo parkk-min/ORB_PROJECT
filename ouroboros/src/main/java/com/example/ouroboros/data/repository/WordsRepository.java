@@ -16,9 +16,11 @@ public interface WordsRepository extends JpaRepository<WordsEntity, Integer> {
     // ORDER BY RAND() 이 함수가 랜덤 단어 출력
     // 특정 글자로 시작하는 단어 중 사용되지 않은 단어를 랜덤으로 하나 조회
     @Query(value = """
-            SELECT * FROM words w 
+            SELECT * FROM words w\s
             WHERE w.firstchar = :firstchar
-            AND w.word NOT IN (SELECT uw.word FROM usedwords uw)
+            AND w.word NOT IN (
+                SELECT uw.word FROM usedwords uw
+            )
             ORDER BY RAND()
             LIMIT 1
             """, nativeQuery = true)
