@@ -198,7 +198,7 @@ class _GamepageState extends State<Gamepage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  provider.user.role=="ROLE_ADMIN"?
+                  // provider.user.role=="ROLE_ADMIN"?
                   ElevatedButton(
                     onPressed: () async {
                       try {
@@ -214,7 +214,8 @@ class _GamepageState extends State<Gamepage> {
                       }
                     },
                     child: Text("힌트 보기"),
-                  ):SizedBox.shrink(),
+                  )
+                      // :SizedBox.shrink(),
                 ],
               )
             ],
