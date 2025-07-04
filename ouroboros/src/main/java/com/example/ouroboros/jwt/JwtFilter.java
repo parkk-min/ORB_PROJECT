@@ -41,7 +41,16 @@ public class JwtFilter extends OncePerRequestFilter { // 요청당 1번만 실�
             response.setStatus(456);
             return;
         }
-        
+
+        //*만료 안되었으면 한번 더 검사
+        String category = jwtUtil.getCategory(token);
+        if(!category.equals("access")){
+            response.getWriter().write("invalid token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            return;
+        }
+
         // 토큰정보 추출
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
