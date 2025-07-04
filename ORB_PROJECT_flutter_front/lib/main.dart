@@ -5,6 +5,7 @@ import 'package:ouroboros/result.dart';
 import 'dart:async';
 import 'package:ouroboros/signup.dart';
 import 'package:ouroboros/userinfo.dart';
+import 'package:ouroboros/websocket_client_test.dart';
 import 'package:ouroboros/wordprovider.dart';
 import 'package:provider/provider.dart';
 
@@ -112,6 +113,20 @@ class _MyPageState extends State<MyPage> {
                         ),
                       ),
                       SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => WebSocketTestPage(
+                                playerId: "user1",
+                                opponentId: "user2",
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text("1:1 대결 시작"),
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           // 게임 내용 저장 하는 api 필요.
