@@ -105,7 +105,7 @@ public class UsedWordsService {
 
     // 최신 단일 사용자가 낸 단어 기록에 승패 결과 저장
     public void recordGameResult(String username, UsedWordsEntity.WinStatus result) {
-        UsedWordsEntity lastUsedWord = usedWordsDAO.findTopByUser_UsernameOrderByIdDesc(username);
+        UsedWordsEntity lastUsedWord = usedWordsDAO.findTopByUser_UsernameOrderByIdDesc(username);//유저네임 가장 마지막
         if(lastUsedWord == null || !lastUsedWord.getResult().equals(UsedWordsEntity.WinStatus.UNDECIDED)){
             UserEntity player= userRepository.findById(username).orElse(null);
 
@@ -113,7 +113,7 @@ public class UsedWordsService {
                     .user(player)
                     .word(null)
                     .log(null)
-                    .result(UsedWordsEntity.WinStatus.valueOf("LOSE"))
+                    .result(result)
                     .build();
             usedWordsDAO.save(usedWordsEntity);
         }else{
