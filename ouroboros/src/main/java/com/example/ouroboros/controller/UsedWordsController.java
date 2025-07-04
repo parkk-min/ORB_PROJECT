@@ -77,5 +77,14 @@ public class UsedWordsController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PostMapping("/findhint")
+    public ResponseEntity<Map<String, Object>> findHintWord(@RequestBody UsedWordsDTO request) {
+        if (request.getWord() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "단어가 없습니다.."));
+        }
+        Map<String, Object> response = usedWordsService.findHintWord(
+                request.getWord()
+        );
+        return ResponseEntity.ok(response);
+    }
 }

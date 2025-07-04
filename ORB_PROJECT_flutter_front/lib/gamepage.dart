@@ -49,7 +49,6 @@ class _GamepageState extends State<Gamepage> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +113,9 @@ class _GamepageState extends State<Gamepage> {
                 children: List.generate(3, (index) {
                   return Icon(
                     Icons.favorite,
-                    color: index < (3 - mistakeCount) ? Colors.red : Colors.grey,
+                    color: index < (3 - mistakeCount)
+                        ? Colors.red
+                        : Colors.grey,
                     size: 36,
                   );
                 }),
@@ -213,11 +214,25 @@ class _GamepageState extends State<Gamepage> {
                         showToast("힌트 요청 실패: $e");
                       }
                     },
-                    child: Text("힌트 보기"),
-                  )
-                      // :SizedBox.shrink(),
+                    child: Text("승리 로직 호출"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final hintWord = await findHint(currentWord);
+                        if (hintWord != null) {
+                          Fluttertoast.showToast(msg: "힌트: $hintWord");
+                        } else {
+                          Fluttertoast.showToast(msg: "힌트를 찾을 수 없습니다.");
+                        }
+                      } catch (e) {
+                        showToast("힌트 요청 실패: $e");
+                      }
+                    },
+                    child: Text("제시어 도움"),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -339,7 +354,6 @@ class _GamepageState extends State<Gamepage> {
         if (botWord == null || gameOver) {
           showVictoryDialog(context);
         }
-
       } else {
         showToast("서버 응답 오류: ${response.statusCode}");
         setState(() {
@@ -367,10 +381,11 @@ class _GamepageState extends State<Gamepage> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context); // 다이얼로그 닫기
-                final result = await Navigator.pushReplacementNamed( // ✅ pushReplacement
-                    context,
-                    "/result",
-                    arguments: "LOSE"
+                final result = await Navigator.pushReplacementNamed(
+                  // ✅ pushReplacement
+                  context,
+                  "/result",
+                  arguments: "LOSE",
                 );
 
                 // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
@@ -400,9 +415,9 @@ class _GamepageState extends State<Gamepage> {
               onPressed: () async {
                 Navigator.pop(context); // 다이얼로그 닫기
                 final result = await Navigator.pushReplacementNamed(
-                    context,
-                    "/result",
-                    arguments: "WIN"
+                  context,
+                  "/result",
+                  arguments: "WIN",
                 );
 
                 // Result 페이지에서 "다시하기" 버튼을 눌렀을 때
@@ -431,49 +446,69 @@ class _GamepageState extends State<Gamepage> {
   }
 
   Future<String> fetchHintWord() async {
-
     final headers = {"authorization": provider.accessToken};
-    try{
+    try {
       final response = await http.get(
-          Uri.parse("http://10.0.2.2:8080/game/hint"),headers: headers
+        Uri.parse("http://10.0.2.2:8080/game/hint"),
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['word']; // 'word' 필드 사용
-
       } else if (response.statusCode == 403) {
-       return errorMessage = utf8.decode(
+        return errorMessage = utf8.decode(
           response.bodyBytes,
         ); // 문자열은 그냥 유니코드로 디코드만 하면 됨.
-      } else if(response.statusCode==456){
+      } else if (response.statusCode == 456) {
         await accessTokenRequest();
         return await fetchHintWord();
       } else {
         throw Exception("힌트 단어를 불러오지 못했습니다.");
       }
-    }catch(e){
+    } catch (e) {
       print("Error: ${e}");
       throw Exception("예외 발생: $e");
     }
   }
 
-  Future<void> accessTokenRequest() async{
+  Future<void> accessTokenRequest() async {
     print("액세스 토큰 재발급 요청");
-    final url= Uri.parse("http://10.0.2.2:8080/reissue");//(십,영,이,이)4가지
-    final header= {'Cookie': provider.refreshToken};
+    final url = Uri.parse("http://10.0.2.2:8080/reissue"); //(십,영,이,이)4가지
+    final header = {'Cookie': provider.refreshToken};
 
-    try{
-      final response = await http.post(url,headers: header);
-      if(response.statusCode ==200){
+    try {
+      final response = await http.post(url, headers: header);
+      if (response.statusCode == 200) {
         final accessToken = response.headers['authorization'];
-        provider.accessToken=accessToken!;
-      }else{
+        provider.accessToken = accessToken!;
+      } else {
         print("Error:${response.statusCode}");
       }
-    }catch(e){
+    } catch (e) {
       print("Error:${e}");
     }
   }
 
+  Future<String?> findHint(String word) async {
+    final url = Uri.parse('http://10.0.2.2:8080/game/findhint');
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"word": word}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final nextWordData = data["nextWord"];
+        final botWord = nextWordData?["word"]; // null-safe 접근
+        return botWord;
+      }
+      return null;
+    } catch (e) {
+      print("Error:${e}");
+      return null;
+    }
+  }
 }

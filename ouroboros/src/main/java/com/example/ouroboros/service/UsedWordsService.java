@@ -161,6 +161,32 @@ public class UsedWordsService {
         usedWordsDAO.deleteByUser_Username(username);
     }
 
+    public Map<String, Object> findHintWord (String word) {
+        Map<String, Object> response = new HashMap<>();
+
+        WordsEntity input = wordsDAO.findByWord(word);
+
+        WordsEntity botWord = wordsDAO.findNextWord(input.getLastChar());
+        if (botWord == null) {  // 다음 단어가 없으면 게임 종료 표시
+            response.put("error", "이어질 단어가 없음: " + input.getLastChar());
+            response.put("nextWord", null);
+            response.put("message", "봇이 단어를 찾지 못했습니다!");
+            return response;
+        }
+        // DTO 변환
+        WordsDTO botWordsDTO = WordsDTO.builder()
+                .id(botWord.getId())
+                .word(botWord.getWord())
+                .firstChar(botWord.getFirstChar())
+                .lastChar(botWord.getLastChar())
+                .build();
+
+        response.put("gameOver", false);
+        // "nextWord"가 서버에 보낼 프론트 키
+        response.put("nextWord", botWordsDTO);
+        response.put("message", "봇의 단어: " + botWord.getWord());
+        return response;
+    }
 }
 
 
