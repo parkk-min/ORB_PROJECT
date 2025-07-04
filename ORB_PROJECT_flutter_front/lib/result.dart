@@ -110,10 +110,23 @@ class _ResultState extends State<Result> {
                 children: [
                   Text("멋진 게임이었습니다.", style: TextStyle(fontSize: 20),),
                   Text("게임의 결과는?",style: TextStyle(fontSize: 20),),
-                  Icon(result=="WIN"?Icons.celebration:Icons.face_unlock_rounded,
-                    size: 30,
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: result == "WIN" ? Colors.amber.withOpacity(0.2) : Colors.blue.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      result == "WIN" ? "🎉" : "😵",
+                      style: const TextStyle(fontSize: 60),
+                    ),
                   ),
-                  Text(result=="WIN"?"승리":"패배",style: TextStyle(fontSize: 20),),
+                  Text(result=="WIN"?"승리":"패배",
+                    style: TextStyle(
+                      fontSize: 33,
+                      fontWeight: FontWeight.bold,
+                      color: result=="WIN"? Colors.amber: Colors.blue,
+                    ),),
                 ],
               ),
             ),
