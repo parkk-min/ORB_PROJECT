@@ -230,7 +230,7 @@ class _GamepageState extends State<Gamepage> {
     Fluttertoast.showToast(
       msg: msg,
       // 메세지
-      toastLength: Toast.LENGTH_LONG,
+      toastLength: Toast.LENGTH_SHORT,
       // 출력시간
       gravity: ToastGravity.CENTER,
       // 출력 위치
